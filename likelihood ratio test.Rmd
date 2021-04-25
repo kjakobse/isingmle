@@ -1,0 +1,1119 @@
+---
+title: "Likelihood ratio test statistic"
+output: html_document
+---
+$p(x) = \prod_{ij} \psi_{ij}(x_i,x_j)$
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+library(Rcpp)
+library(profvis)
+library(microbenchmark)
+library(e1071)
+library(latex2exp)
+```
+
+```{r}
+cppFunction('
+  NumericVector calculatexBar(NumericMatrix data, unsigned long long int length, int d) {
+    NumericVector xBar(d);
+
+    for (int t = 0; t < d; t++) {
+      double dEntry = 0;
+
+      for (unsigned long long int u = 0; u < length; u++) {
+        dEntry += data(u, t);
+      }
+      xBar[t] = dEntry / length;
+    }
+
+    return (xBar);
+  }
+')
+
+cppFunction('
+  NumericMatrix calculateM(NumericMatrix data, unsigned long long int length, int d) {
+    NumericMatrix matrixM(d, d);
+
+    for (int t = 0; t < d; t++) {
+      for (int u = 0; u < d; u++) {
+        double entryValue = 0;
+        for (unsigned long long int v = 0; v < length; v++) {
+          //entryValue += data(v, t) * data(v, u);
+          if (data(v, t) == data(v, u)) {
+            entryValue++;
+          } else {
+            entryValue--;
+          }
+        }
+        matrixM(t, u) = entryValue / length;
+      }
+    }
+
+    return(matrixM);
+  }
+')
+
+cppFunction('
+  NumericVector createP(NumericVector mu, int d) {
+    unsigned long long int pLength = pow(2, d);
+    NumericVector p(pLength);
+    double normalisationConstant = pow(2, -d);
+    for (unsigned long long int t = 0; t < pLength; t++) {
+      double pEntry = 1;
+      for (int u = 0; u < d; u++) {
+        unsigned long long int tMask = 1 << u;
+        int observationValue = -1;
+        if (t & tMask) {
+          observationValue = 1;
+        }
+        double value = 1 + observationValue * mu[d - u - 1];
+        pEntry *= value;
+      }
+      p[t] = normalisationConstant * pEntry;
+    }
+    
+    return(p);
+  }
+')
+
+cppFunction('
+  List calculateNewPAndEHatLRT(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat) {
+    int ePlusDim = ePlus.nrow();
+    unsigned long long int pLength = p.size();
+    for (int t = 0; t < ePlusDim; t++) {
+      int i = ePlus(t, 0);
+      int j = ePlus(t, 1);
+      int iCInternal = d - i;
+      int jCInternal = d - j;
+      unsigned long long int iMask = 1 << iCInternal; 
+      unsigned long long int jMask = 1 << jCInternal; 
+
+      double p00 = 0.0;
+      double p01 = 0.0;
+      double p10 = 0.0;
+      double p11 = 0.0;
+      for (unsigned long long int u = 0; u < pLength; u++) {
+        if (u & iMask) {
+          if (u & jMask) {
+            p11 += p[u];
+          } else {
+            p10 += p[u];
+          }
+        } else {
+          if (u & jMask) {
+            p01 += p[u];
+          } else {
+            p00 += p[u];
+          }
+        }
+      }
+
+      double q11;
+      double q10;
+      double q01;
+      double q00;
+      
+      if(abs(e(t, 0) < 1e-15) || abs(p11) < 1e-15) {
+        q11 = 0;
+      } else {
+        q11 = e(t, 0) / p11;
+      }
+      if(abs(e(t, 1) < 1e-15) || abs(p10) < 1e-15) {
+        q10 = 0;
+      } else {
+        q10 = e(t, 1) / p10;
+      }
+      if(abs(e(t, 2)) < 1e-15 || abs(p01) < 1e-15) {
+        q01 = 0;
+      } else {
+        q01 = e(t, 2) / p01;
+      }
+      if(abs(e(t, 3)) < 1e-15 || abs(p00) < 1e-15) {
+        q00 = 0;
+      } else {
+        q00 = e(t, 3) / p00;
+      }
+      
+      if (abs(q11) < 1e-15 || abs(q10) < 1e-15 || abs(q01) < 1e-15 || abs(q00) < 1e-15) {
+        eHat(t, 0) = NA_REAL;
+        eHat(t, 1) = NA_REAL;
+      } else {
+        double delta = 0.25 * log(q11 * q00 / (q10 * q01));
+      
+        unsigned long long int v1 = 0; 
+        unsigned long long int v2 = iMask; 
+        unsigned long long int v3 = jMask; 
+        unsigned long long int v4 = iMask | jMask;
+        
+        double capitalJ;
+        //if(abs(p[v1]) < 1e-15 || abs(p[v2]) < 1e-15 || abs(p[v3]) < 1e-15 || abs(p[v4]) < 1e-15) {
+        //  capitalJ = 0;
+        //} else {
+        //  capitalJ = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
+        //}
+        
+        unsigned long long int wLength = pow(2, d-2);
+        unsigned long long int index = 0;
+        for(unsigned long long int w = 0; w < wLength; w++) {
+          if(jMask & index) {
+            index += jMask;
+          }
+          if(iMask & index) {
+            index += iMask;
+          }
+          if(jMask & index) {
+            index += jMask;
+          }
+          if(p[v1 + index] > 1e-15 && p[v2 + index] > 1e-15 && p[v3 + index] > 1e-15 && p[v4 + index] > 1e-15) {
+            capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
+            break;
+          } 
+          index++;
+        }
+        
+        //std::cout << "capitalJ = " << capitalJ << std::endl;
+        //std::cout << "p[v1] = " << p[v1] << std::endl;
+        //std::cout << "p[v2] = " << p[v2] << std::endl;
+        //std::cout << "p[v3] = " << p[v3] << std::endl;
+        //std::cout << "p[v4] = " << p[v4] << std::endl;
+        //std::cout << "q11 = " << q11 << std::endl;
+        //std::cout << "q00 = " << q00 << std::endl;
+        //std::cout << "q10 = " << q10 << std::endl;
+        //std::cout << "q01 = " << q01 << std::endl;
+        //std::cout << "delta = " << delta << std::endl;
+
+        if (delta + capitalJ >= 0) {
+            eHat(t, 0) = i;
+            eHat(t, 1) = j;
+        } else {
+          double capitalC = exp(-4 * capitalJ) * (p11 * p00) / (p10 * p01);
+          double a = 1 - capitalC;
+          double b = e(t, 0) + e(t, 3) + capitalC * (e(t, 1) + e(t, 2));
+          double c = e(t, 0) * e(t, 3) - capitalC * (e(t, 1) * e(t, 2));
+          double lambda;
+          if(a == 0) {
+            lambda = -c / b;
+          } else {
+            lambda = (-b + sqrt(pow(b,2) - 4 * a * c)) / (2 * a);
+          }
+          q11 = (e(t, 0) + lambda) / p11;
+          q10 = (e(t, 1) - lambda) / p10;
+          q01 = (e(t, 2) - lambda) / p01;
+          q00 = (e(t, 3) + lambda) / p00;
+          eHat(t, 0) = NA_REAL;
+          eHat(t, 1) = NA_REAL;
+        }
+      }
+      
+      for (unsigned long long int u = 0; u < pLength; u++) {
+        if (u & iMask) {
+          if (u & jMask) {
+            p[u] = p[u] * q11;
+          } else {
+            p[u] = p[u] * q10;
+          }
+        } else {
+          if (u & jMask) {
+            p[u] = p[u] * q01;
+          } else {
+            p[u] = p[u] * q00;
+          }
+        }
+      }
+    }
+    
+    return List::create(_["p"] = p, _["eHat"] = eHat);
+  }
+')
+
+cppFunction('
+  NumericVector calculateNewMu(NumericVector p, int d) {
+    NumericVector mu(d);
+    unsigned long long int pLength = p.size();
+
+    for (int t = 0; t < d; t++) {
+      unsigned long long int uMask = 1 << (d - t - 1);
+
+      double dEntry = 0;
+      for (unsigned long long int u = 0; u < pLength; u++) {
+        if (u & uMask) {
+          dEntry += p[u]; // Observation is +1 add p[u]
+        } else {
+          dEntry -= p[u]; // observation is -1 subtract p[u]
+        }
+      }
+      mu[t] = dEntry;
+    }
+
+    return(mu);
+  }
+')
+
+cppFunction('
+  NumericMatrix calculateNewXi(NumericVector p, int d) {
+    NumericMatrix xi(d, d);
+    unsigned long long int pLength = p.size();
+
+    for (int t = 0; t < d; t++) {
+      unsigned long long int tMask = 1 << (d - t - 1);
+      for (int u = t; u < d; u++) {
+        unsigned long long int uMask = 1 << (d - u - 1);
+
+        double entryValue = 0;
+        for (unsigned long long int v = 0; v < pLength; v++) {
+          if (((bool)(v & tMask)) == ((bool)(v & uMask))) {
+            entryValue += p[v]; // observations have same value
+          } else {
+            entryValue -= p[v]; // observations have opposite value
+          }
+        }
+        xi(t, u) = entryValue;
+        if (t != u) { // save symmetric value
+          xi(u, t) = entryValue;
+        }
+      }
+    }
+
+    return(xi);
+  }
+')
+
+cppFunction('
+  NumericMatrix createEPlus(NumericMatrix e, NumericMatrix m, NumericVector xBar) {
+    int nRows = e.nrow();
+    int nCols = e.ncol();
+
+    NumericVector includeRows(nRows);
+    int nIncludedRows = 0;
+    for (int i = 0; i < nRows; i++) {
+      if (m(e(i, 0) - 1, e(i, 1) - 1) > (xBar[e(i, 0) - 1] * xBar[e(i, 1) - 1])) {
+        includeRows[i] = 1;
+        nIncludedRows++;
+      }
+    }
+    NumericMatrix ePlus(nIncludedRows, nCols);
+    int k = 0;
+    for (int i = 0; i < nRows; i++) {
+      if (includeRows[i] == 1) {
+        for (int j = 0; j < nCols; j++) {
+          ePlus(k, j) = e(i, j);
+        }
+        k++;
+      }
+    }
+    
+    return(ePlus);
+  }
+')
+
+cppFunction('
+  NumericVector calculateCondition(NumericMatrix eHatOmitNA, NumericMatrix m, NumericMatrix xi) {
+    int nRows = eHatOmitNA.nrow();
+
+    NumericVector condition(nRows);
+    for (int i = 0; i < nRows; i++) {
+      condition[i] = abs(m(eHatOmitNA(i, 0) - 1, eHatOmitNA(i, 1) - 1) - xi(eHatOmitNA(i, 0) - 1, eHatOmitNA(i, 1) - 1));
+    }
+    
+    return(condition);
+  }
+')
+
+cppFunction('
+  NumericVector calculateCondition2(NumericMatrix e, NumericMatrix m, NumericMatrix xi) {
+    int nRows = e.nrow();
+
+    NumericVector condition2(nRows);
+    for (int i = 0; i < nRows; i++) {
+      condition2[i] = m(e(i, 0) - 1, e(i, 1) - 1) - xi(e(i, 0) - 1, e(i, 1) - 1);
+    }
+    
+    return(condition2);
+  }
+')
+
+cppFunction('
+  NumericMatrix calculateEmpiricalLRT(NumericMatrix ePlus, NumericMatrix m, NumericVector xBar) {
+    int ePlusDim = ePlus.nrow();
+
+    NumericMatrix empirical(ePlusDim, 4);
+    for (int t = 0; t < ePlusDim; t++) {
+      int i = ePlus(t, 0) - 1;
+      int j = ePlus(t, 1) - 1;
+      empirical(t, 0) = (1 + xBar[i] + xBar[j] + m(i, j)) / 4;
+      empirical(t, 1) = (1 + xBar[i] - xBar[j] - m(i, j)) / 4;
+      empirical(t, 2) = (1 - xBar[i] + xBar[j] - m(i, j)) / 4;
+      empirical(t, 3) = (1 - xBar[i] - xBar[j] + m(i, j)) / 4;
+    }
+    return(empirical);
+  }
+')
+
+cppFunction('
+  List calculateNewPAndEHatnoMTP2LRT(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat) {
+    int ePlusDim = ePlus.nrow();
+    unsigned long long int pLength = p.size();
+    for (int t = 0; t < ePlusDim; t++) {
+      int i = ePlus(t, 0);
+      int j = ePlus(t, 1);
+      int iCInternal = d - i;
+      int jCInternal = d - j;
+      unsigned long long int iMask = 1 << iCInternal; 
+      unsigned long long int jMask = 1 << jCInternal; 
+
+      double p00 = 0.0;
+      double p01 = 0.0;
+      double p10 = 0.0;
+      double p11 = 0.0;
+      for (unsigned long long int u = 0; u < pLength; u++) {
+        if (u & iMask) {
+          if (u & jMask) {
+            p11 += p[u];
+          } else {
+            p10 += p[u];
+          }
+        } else {
+          if (u & jMask) {
+            p01 += p[u];
+          } else {
+            p00 += p[u];
+          }
+        }
+      }
+      
+      double q11;
+      double q10;
+      double q01;
+      double q00;
+      
+      if(abs(e(t, 0) < 1e-15) || abs(p11) < 1e-15) {
+        q11 = 0;
+      } else {
+        q11 = e(t, 0) / p11;
+      }
+      if(abs(e(t, 1) < 1e-15) || abs(p10) < 1e-15) {
+        q10 = 0;
+      } else {
+        q10 = e(t, 1) / p10;
+      }
+      if(abs(e(t, 2) < 1e-15) || abs(p01) < 1e-15) {
+        q01 = 0;
+      } else {
+        q01 = e(t, 2) / p01;
+      }
+      if(abs(e(t, 3) < 1e-15) || abs(p00) < 1e-15) {
+        q00 = 0;
+      } else {
+        q00 = e(t, 3) / p00;
+      }
+      eHat(t, 0) = i;
+      eHat(t, 1) = j;
+
+      for (unsigned long long int u = 0; u < pLength; u++) {
+        if (u & iMask) {
+          if (u & jMask) {
+            p[u] = p[u] * q11;
+          } else {
+            p[u] = p[u] * q10;
+          }
+        } else {
+          if (u & jMask) {
+            p[u] = p[u] * q01;
+          } else {
+            p[u] = p[u] * q00;
+          }
+        }
+      }
+    }
+    
+    return List::create(_["p"] = p, _["eHat"] = eHat);
+  }
+')
+```
+
+```{r}
+Ising_MLE_rcpp_LRT <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 100){
+  V <- G[[1]]
+  E <- G[[2]]
+  
+  if(is.null(data)) {
+    if(is.null(xBar) | is.null(M)) {
+      stop("Must input either a data set or sufficient statistics")
+    }
+    mu <- xBar
+  } else {
+    M <- calculateM(as.matrix(data), dim(data)[1], dim(data)[2])
+    xBar <- calculatexBar(as.matrix(data), dim(data)[1], dim(data)[2])
+    mu <- xBar
+  }
+  
+  if(!(all(abs(xBar) < 1))) {
+    stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical mean contains 1 or -1."))
+  }
+  
+  d <- length(mu)
+  
+  mCond <- matrix(0, d, d)
+  for(i in (1+seq_len(d-1))) {
+    for(j in seq_len(i-1))
+    mCond[i] <- M[i, j]
+  }
+  if(!(all(abs(mCond) < 1))) {
+    stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical correlation matrix contains 1 or -1."))
+  }
+  
+  Xi <- diag(d)
+  
+  p <- createP(mu, d)
+  
+  ePlus <- createEPlus(E, M, xBar)
+  
+  eHat <- matrix(NA, nrow(ePlus), 2)
+  eHatOmitNA <- na.omit(eHat)
+  
+  condition <- c()
+  condition2 <- calculateCondition2(E, M, Xi);
+  
+  empirical <- calculateEmpiricalLRT(ePlus, M, xBar);
+  
+  iter <- 0L
+  while((iter < maxiter) & 
+        (max(abs(mu-xBar)) > epsilon | suppressWarnings(max(condition2) > epsilon2) | suppressWarnings(max(condition) > epsilon))){ 
+    #browser()
+    pAndEHatResult <- calculateNewPAndEHatLRT(ePlus, d, empirical, p, eHat)
+    p <- pAndEHatResult$p
+    eHat <- pAndEHatResult$eHat
+
+    mu <- calculateNewMu(p, d)
+    Xi <- calculateNewXi(p, d)
+    
+    eHatOmitNA <- na.omit(eHat)
+
+    condition <- calculateCondition(eHatOmitNA, M, Xi);
+    condition2 <- calculateCondition2(E, M, Xi);
+    
+    iter <- iter + 1L
+  }
+  
+  if(iter >= maxiter) warning("MLE did not converge; maximum number of iterations reached")
+  
+  list(p_hat = p, G_hat = list(V_hat = V, E_hat = eHatOmitNA), mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter)
+}
+
+Ising_MLE_noMTP2_rcpp_LRT <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 100){
+  V <- G[[1]]
+  E <- G[[2]]
+  
+  if(is.null(data)) {
+    if(is.null(xBar) | is.null(M)) {
+      stop("Must input either a data set or sufficient statistics")
+    }
+    mu <- xBar
+  } else {
+    M <- calculateM(as.matrix(data), dim(data)[1], dim(data)[2])
+    xBar <- calculatexBar(as.matrix(data), dim(data)[1], dim(data)[2])
+    mu <- xBar
+  }
+  
+  if(!(all(abs(xBar) < 1))) {
+    stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical mean contains 1 or -1."))
+  }
+  
+  d <- length(mu)
+  
+  mCond <- matrix(0, d, d)
+  for(i in (1+seq_len(d-1))) {
+    for(j in seq_len(i-1))
+      mCond[i] <- M[i, j]
+  }
+  if(!(all(abs(mCond) < 1))) {
+    stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical correlation matrix contains 1 or -1."))
+  }
+  
+  Xi <- diag(d)
+  
+  p <- createP(mu, d)
+  
+  eHat <- matrix(NA, nrow(E), 2)
+  eHatOmitNA <- na.omit(eHat)
+  
+  condition <- c(Inf)
+  
+  empirical <- calculateEmpiricalLRT(E, M, xBar);
+  
+  iter <- 0L
+  while((iter < maxiter) & (max(abs(mu-xBar)) > epsilon | suppressWarnings(max(condition) > epsilon))){ 
+    pAndEHatResult <- calculateNewPAndEHatnoMTP2LRT(E, d, empirical, p, eHat)
+    p <- pAndEHatResult$p
+    eHat <- pAndEHatResult$eHat
+    
+    mu <- calculateNewMu(p, d)
+    Xi <- calculateNewXi(p, d)
+    
+    eHatOmitNA <- na.omit(eHat)
+    
+    condition <- calculateCondition(eHatOmitNA, M, Xi);
+    
+    iter <- iter + 1L
+  }
+  
+  if(iter >= maxiter) warning("MLE did not converge; maximum number of iterations reached")
+  
+  list(p_hat = p, G_hat = list(V_hat = V, E_hat = eHatOmitNA), mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter)
+}
+```
+
+```{r}
+cppFunction('
+  double IsingLogLikelihoodhJ(NumericMatrix data, NumericVector h, NumericMatrix J) {
+    int d = h.size();
+    unsigned long long int nrow = data.nrow();
+    unsigned long long int pLength = pow(2, d);
+    double pSum = 0;
+    double logLikelihood = 0;
+
+    for (unsigned long long int t = 0; t < pLength; t++) {
+      double pEntry = 0;
+      for (int u = 0; u < d; u++) {
+        unsigned long long int tMaskU = 1 << u;
+        int observationValueU = -1;
+        if (t & tMaskU) {
+          observationValueU = 1;
+        }
+        for(int v = 0; v < d; v++) {
+          unsigned long long int tMaskV = 1 << v;
+          int observationValueV = -1;
+          if (t & tMaskV) {
+            observationValueV = 1;
+          }
+          pEntry += 0.5 * J(d-u-1, d-v-1) * observationValueU * observationValueV;
+        }
+        pEntry += h(d-u-1) * observationValueU;
+      }
+      pSum += exp(pEntry);
+    }
+    
+    double A = log(pSum);
+    
+    for(unsigned long long int t = 0; t < nrow; t++) {
+      double dataEntry = 0;
+      for (int u = 0; u < d; u++) {
+        
+        for(int v = 0; v < d; v++) {
+          
+          dataEntry += 0.5 * J(u, v) * data(t, u) * data(t, v);
+        }
+        dataEntry += h(u) * data(t, u);
+      }
+      dataEntry -= A;
+      logLikelihood += dataEntry;
+    }
+    
+    return(logLikelihood);
+  }
+')
+
+cppFunction('
+  double IsingLogLikelihoodProbs(NumericMatrix data, NumericVector p) {
+    int d = data.ncol();
+    unsigned long long int nrow = data.nrow();
+    unsigned long long int pLength = p.size();
+    double logLikelihood = 0;
+    
+    for(unsigned long long int t = 0; t < nrow; t++) {
+      double pEntry = 0;
+      for (int u = 0; u < d; u++) {
+          if(data(t, u) == 1) {
+            pEntry += pow(2, d-u-1);
+        }
+      }
+      logLikelihood += log(p[pEntry]);
+    }
+    
+    return(logLikelihood);
+  }
+')
+
+IsingLogLikelihood <- function(data, h = NULL, J = NULL, p = NULL) {
+  if(is.null(h) & is.null(J) & !is.null(p)) {
+    IsingLogLikelihood <- IsingLogLikelihoodProbs(data, p)
+  } else if(!is.null(h) & !is.null(J) & is.null(p)) {
+    IsingLogLikelihood <- IsingLogLikelihoodhJ(data, h, J)
+  } else {
+    stop("Must specify either the natural parameters h and J or the probability vector p")
+  }
+  IsingLogLikelihood
+}
+```
+
+```{r}
+IntToSign <- function(x, dig) {
+  i <- 0L
+  string <- rep(-1, dig)
+  while (x > 0) {
+    if(x %% 2L == 0) string[dig - i] <- -1
+    else string[dig - i] <- 1
+    x <- x %/% 2L
+    i <- i + 1L
+  }
+  string
+}
+
+cppFunction('
+  NumericVector computeP(NumericVector h, NumericMatrix J) {
+    int d = h.size();
+    unsigned long long int pLength = pow(2, d);
+    NumericVector p(pLength);
+    double pSum = 0;
+
+    for (unsigned long long int t = 0; t < pLength; t++) {
+      double pEntry = 0;
+      for (int u = 0; u < d; u++) {
+        unsigned long long int tMaskU = 1 << u;
+        int observationValueU = -1;
+        if (t & tMaskU) {
+          observationValueU = 1;
+        }
+        //std::cout << "observationValueU = " << observationValueU << std::endl;
+        for(int v = 0; v < d; v++) {
+          unsigned long long int tMaskV = 1 << v;
+          int observationValueV = -1;
+          if (t & tMaskV) {
+            observationValueV = 1;
+          }
+          //std::cout << "observationValueV = " << observationValueV << std::endl;
+          pEntry += 0.5 * J(d-u-1, d-v-1) * observationValueU * observationValueV;
+        }
+        pEntry += h(d-u-1) * observationValueU;
+      }
+      //std::cout << "pEntry = " << pEntry << std::endl;
+      p[t] = exp(pEntry);
+      pSum += exp(pEntry);
+    }
+    
+    //std::cout << "pSum = " << pSum << std::endl;
+    
+    for (unsigned long long int t = 0; t < pLength; t++) {
+      p[t] = p[t] / pSum;
+    }
+    
+    return(p);
+  }
+')
+
+IsingSampler <- function(h = NULL, J = NULL, p = NULL, N = 1000) {
+  if(!is.null(h)) {
+    if(!(is.numeric(h))) stop("h must be a numeric vector")
+  }
+  if(!is.null(J)) {
+    if(!(is.matrix(J) & isSymmetric(J) & length(h) == dim(J)[1])) stop("J must be a symmetric matrix with dimensions equal to the lenght of h.")
+  }
+  
+  if(is.null(p)) {
+    d <- length(h)
+    p <- computeP(h, J)
+  } else {
+    d <- log2(length(p))
+  }
+  
+  Sample <- matrix(0, N, d)
+  
+  IntSample <- sample(x = 0:(2^d-1), size = N, replace = TRUE, prob = p)
+  
+  for(i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
+  
+  return(as.data.frame(Sample))
+}
+```
+
+
+We consider the dataset from Bartolucci and Forcina. Data is from a test with 150 students and made up of $d=4$ items.
+
+```{r}
+testDataList <- vector("list", 150)
+testDataList[1] <- 2; testDataList[2] <- 3; testDataList[3:6] <- 4; testDataList[7:30] <- 5; testDataList[31:33] <- 7 
+testDataList[34:37] <- 10; testDataList[38:47] <- 11; testDataList[48:50] <- 13; testDataList[51:60] <- 14; testDataList[61:150] <- 15
+testDataInt <- sapply(testDataList, function(x) {x})
+testData <- sapply(testDataList, function(x) {IntToSign(x, 4)})
+testData <- as.data.frame(t(testData))
+```
+
+We fit the data with and without the MTP2 constraint:
+```{r}
+testG <- list(1:4, matrix(c(1, 2, 1, 3, 1, 4, 2, 3, 2, 4, 3, 4), 6, 2, T))
+testM <- calculateM(as.matrix(testData), dim(testData)[1], 4)
+testavg <- calculatexBar(as.matrix(testData), dim(testData)[1], 4)
+test_fit_mtp2 <- Ising_MLE_rcpp_LRT(testG, data = testData, epsilon = 1e-9, epsilon2 = 1e-9)
+test_fit_nomtp2 <- Ising_MLE_noMTP2_rcpp_LRT(testG, data = testData, epsilon = 1e-9, epsilon2 = 1e-9)
+```
+
+We calculate the log-likelihoods and the log-likelihood ratio:
+
+```{r}
+test_LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(testData), p = test_fit_mtp2$p_hat)
+test_LogLikelihood_noMTP2 <- IsingLogLikelihood(as.matrix(testData), p = test_fit_nomtp2$p_hat)
+test_LogLikelihood_full <- binaryLogLikelihood(testDataInt, 4)
+test_LRT <- -2 * (test_LogLikelihood_MTP2 - test_LogLikelihood_noMTP2)
+test_LRT_full <- -2 * (test_LogLikelihood_noMTP2 - test_LogLikelihood_full)
+test_LRT_full_mtp2 <- -2 * (test_LogLikelihood_MTP2 - test_LogLikelihood_full)
+
+```
+
+Next we simulate from the MTP$_2$ model and calculate the log-likelihood ratios for each sample to determine the distribution of the log-likelihood ratios:
+
+```{r}
+LRT <- c()
+LRT_full_mtp2 <- c()
+for(i in 1:9999) {
+  Listsample <- IsingSampler(p = test_fit_mtp2$p_hat, N = 10000, obs = TRUE, int = TRUE) # dim(testData)[1]
+  sample <- Listsample$observations
+  intSample <- Listsample$observations_int
+  fit_mtp2 <- Ising_MLE_rcpp_LRT(testG, data = sample, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 1000)
+  fit_nomtp2 <- suppressWarnings(Ising_MLE_noMTP2_rcpp_LRT(testG, data = sample, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 10000))
+  LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_mtp2$p_hat)
+  LogLikelihood_noMTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_nomtp2$p_hat)
+  LogLikelihood_full <- binaryLogLikelihood(intSample, 4)
+  LRT[i] <- -2 * (LogLikelihood_MTP2 - LogLikelihood_noMTP2)
+  LRT_full_mtp2[i] <- -2 * (LogLikelihood_MTP2 - LogLikelihood_full)
+}
+
+LRT_full <- c()
+for(i in 1:9999) {
+  Listsample <- IsingSampler(p = test_fit_nomtp2$p_hat, N = 10000, obs = TRUE, int = TRUE) # dim(testData)[1]
+  sample <- Listsample$observations
+  intSample <- Listsample$observations_int
+  fit_nomtp2 <- suppressWarnings(Ising_MLE_noMTP2_rcpp_LRT(testG, data = sample, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 10000))
+  LogLikelihood_noMTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_nomtp2$p_hat)
+  LogLikelihood_full <- binaryLogLikelihood(intSample, 4)
+  LRT_full[i] <- -2 * (LogLikelihood_noMTP2 - LogLikelihood_full)
+}
+```
+
+```{r eval=FALSE, include=FALSE}
+setwd("D:/universitet/matematik/speciale/R")
+save(LRT, LRT_full, LRT_full_mtp2, file = "testLRTsims10000.RData")
+```
+Note the problem with the non MTP$_2$ algorithm producing negative values of the empirical distribution, so the algorithm can't run, with this sample size (n=150). Is it possible to fit to empirical moments directly? 
+
+```{r}
+#pValue <- sum(LRT > test_LRT) / 9999
+df <- 2
+hist(LRT, probability = TRUE, breaks = seq(0,30,0.25), xlim = c(0, test_LRT + 10))
+curve(dchisq(x, 2) / (1 - mean(LRT==0)), from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+abline(v = test_LRT, col = "red")
+
+hist(LRT, probability = TRUE, breaks = seq(0,30,0.25), xlim = c(0, test_LRT + 10))
+mixchisq <- function(x) {(0.4 * dchisq(x, 1) + 0.6 * dchisq(x, 2) + 0.0 * dchisq(x, 3)) / (1 - mean(LRT==0))}
+curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+abline(v = test_LRT, col = "red")
+
+hist(LRT_full, probability = TRUE, breaks = 100, xlim = c(0, test_LRT_full + 10))
+abline(v = test_LRT_full, col = "red")
+mixchisqfull <- function(x) {(0.5 * dchisq(x, 3) + 0.5 * dgamma(x, shape = 2, scale = mean(LRT_full) / 2)) / (1 - mean(LRT_full==0))}
+curve(mixchisqfull, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+curve(dchisq(x, 2), from=0, to=30, n=201, add = TRUE, col="blue", lwd = 2)
+curve(dgamma(x, shape = 2, scale = mean(LRT_full) / 2),from=0, to=30, n=201, add = TRUE, col="green", lwd = 2)
+
+hist(LRT_full_mtp2, probability = TRUE, breaks = 50, xlim = c(0, test_LRT_full_mtp2 + 10))
+abline(v = test_LRT_full_mtp2, col = "red")
+mixchisqfullmtp2 <- function(x) {(0 * dchisq(x-0.5, 8) + 0.3 * dchisq(x-0.5, 7) + 0.7 * dchisq(x-0.5, 6) + 0 * dchisq(x-0.5, 5)) / (1 - mean(LRT_full_mtp2==0))}
+mixchisqfullmtp2 <- function(x) {(0.6 * dchisq(x, 8) + 0.4 * dchisq(x, 7)) / (1 - mean(LRT_full_mtp2==0))}
+curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+curve(dchisq(x, 7), from=0, to=30, n=201, add = TRUE, col="blue", lwd = 2)
+lines(density(LRT_full_mtp2), lwd = 2)
+```
+Note that we observe a point probability in 0, i.e. the MLE is a MTP$_2$ Ising model.
+```{r}
+par(mfrow = c(1,3), cex = 1.1)
+hist(LRT, probability = TRUE, breaks = seq(0,26,0.5), 
+     main = TeX(r'($\Lambda(I,$ $I_2)$ for test data)', bold = TRUE), xlab =  TeX(r'($\Lambda(I,$ $I_2)$)'))
+abline(v = test_LRT, col = "red")
+
+hist(LRT_full, probability = TRUE, breaks = 65, 
+     main = TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I)$ for test data)', bold = TRUE), xlab =  TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I)$)'))
+abline(v = test_LRT_full, col = "red")
+
+hist(LRT_full_mtp2, probability = TRUE, breaks = 50, 
+     main = TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I_2)$ for test data)', bold = TRUE), xlab =  TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I_2)$)'))
+abline(v = test_LRT_full_mtp2, col = "red")
+```
+```{r}
+(pValue_Ising_mtp2 <- sum(LRT > test_LRT) / 9999)
+(pValue_full_Ising <- sum(LRT_full > test_LRT_full) / 9999)
+(pValue_full_mtp2 <- sum(LRT_full_mtp2 > test_LRT_full_mtp2) / 9999)
+```
+
+```{r eval=FALSE, include=FALSE}
+setwd("D:/universitet/matematik/speciale/R")
+load(file = "testLRTsims500.RData")
+test_LRT_sim_500 <- LRT
+test_LRT_full_mtp2_sim_500 <- LRT_full_mtp2
+load(file = "testLRTsims2000.RData")
+test_LRT_sim_2000 <- LRT
+test_LRT_full_mtp2_sim_2000 <- LRT_full_mtp2
+load(file = "testLRTsims10000.RData")
+test_LRT_sim_10000 <- LRT
+test_LRT_full_mtp2_sim_10000 <- LRT_full_mtp2
+```
+
+```{r}
+par(mfrow=c(2,3))#, cex = 1.2
+mixchisq <- function(x) {(0.44 * dchisq(x, 1) + 0.2 * dchisq(x, 2) + 0.36 * dchisq(x, 3)) / (1 - mean(test_LRT_sim_10000==0))}
+hist(test_LRT_sim_500, probability = TRUE, breaks = seq(0,30,0.25), xlim = c(0, 15), ylim = c(0,0.6), 
+     main = TeX(r'($\Lambda_{500}(I,$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{500}(I,$ $I_2)$)'))
+curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+hist(test_LRT_sim_2000, probability = TRUE, breaks = seq(0,30,0.25), xlim = c(0, 15), ylim = c(0,0.6), 
+     main = TeX(r'($\Lambda_{2000}(I,$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{2000}(I,$ $I_2)$)'))
+curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+hist(test_LRT_sim_10000, probability = TRUE, breaks = seq(0,30,0.25), xlim = c(0, 15), ylim = c(0,0.6), 
+     main = TeX(r'($\Lambda_{10000}(I,$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{10000}(I,$ $I_2)$)'))
+curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+
+mixchisqfullmtp2 <- function(x) {(0.22 * dchisq(x, 8) + 0.6 * dchisq(x, 7) + 0.18 * dchisq(x, 6)) / (1 - mean(test_LRT_full_mtp2_sim_10000==0))}
+hist(test_LRT_full_mtp2_sim_500, probability = TRUE, breaks = seq(0,32,0.4), xlim = c(0, 25), ylim = c(0,0.13), 
+     main = TeX(r'($\Lambda_{500}(P(\{-1,1\}^4),$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{500}(P(\{-1,1\}^4),$ $I_2)$)'))
+curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+hist(test_LRT_full_mtp2_sim_2000, probability = TRUE, breaks = seq(0,32,0.4), xlim = c(0, 25), ylim = c(0,0.13), 
+     main = TeX(r'($\Lambda_{2000}(P(\{-1,1\}^4),$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{2000}(P(\{-1,1\}^4),$ $I_2)$)'))
+curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+hist(test_LRT_full_mtp2_sim_10000, probability = TRUE, breaks = seq(0,32,0.4), xlim = c(0, 25), ylim = c(0,0.13), 
+     main = TeX(r'($\Lambda_{10000}(P(\{-1,1\}^4),$ $I_2)$ for test data)', bold = TRUE), xlab = TeX(r'($\Lambda_{10000}(P(\{-1,1\}^4),$ $I_2)$)'))
+curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+```
+
+```{r}
+mixchisqfullmtp2 <- function(x) {0 * dchisq(x, 10) + 0.8 * dchisq(x, 8) + 0.2 * dchisq(x, 7)}
+hist(test_LRT_full_mtp2_sim_500, probability = TRUE, seq(0,32,0.4), xlim = c(0, 25), ylim = c(0,0.13))
+curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+```
+
+
+Dataset on psychological disorders:
+
+```{r}
+setwd("D:/universitet/matematik/Speciale/R/data")
+ncsdata=read.table(file="DepressionAnxiety.txt") #read in data
+colnames(ncsdata)=c("depr", "inte", "weig", "mSle", "moto", "mFat", "repr", "conc", "suic", "anxi", "even", "ctrl", "edge", "gFat", "irri", "gCon", "musc", "gSle") #Define variable names.
+selectVar <- !(attributes(ncsdata)$names == "anxi" | attributes(ncsdata)$names == "even")
+ncsDataReduced <- subset(ncsdata, select = selectVar)
+ncsDataInt <- rep(0, 9282)
+for(i in 1:16){
+  for(j in 1:9282){
+    if(ncsDataReduced[j, i] == 0) {
+      ncsDataReduced [j, i] <- -1
+    } else if(ncsDataReduced[j, i] == 1){
+      ncsDataInt[j] <- ncsDataInt[j] + 2^(16-i)
+    }
+  }
+}
+```
+
+
+```{r}
+ncsAvg <- calculatexBar(as.matrix(ncsDataReduced), dim(ncsDataReduced)[1], dim(ncsDataReduced)[2])
+ncsM <- calculateM(as.matrix(ncsDataReduced), dim(ncsDataReduced)[1], dim(ncsDataReduced)[2])
+ncsG <- list(1:16, 
+             cbind(
+               c(rep(1,15),rep(2,14),rep(3,13),rep(4,12),rep(5,11),rep(6,10),rep(7,9),rep(8,8),rep(9,7),rep(10,6),rep(11,5),rep(12,4),rep(13,3),rep(14,2),15),
+               c(2:16,3:16,4:16,5:16,6:16,7:16,8:16,9:16,10:16,11:16,12:16,13:16,14:16,15:16,16)
+             ))
+ncsfit_MTP2 <- Ising_MLE_rcpp_LRT(data = ncsDataReduced, G = ncsG, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 200)
+ncsfit_noMTP2 <- Ising_MLE_noMTP2_rcpp_LRT(data = ncsDataReduced, G = ncsG, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 2000)
+```
+
+```{r}
+ncs_LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(ncsDataReduced), p = ncsfit_MTP2$p_hat)
+ncs_LogLikelihood_noMTP2 <-IsingLogLikelihood(as.matrix(ncsDataReduced), p = ncsfit_noMTP2$p_hat)
+ncs_LogLikelihood_full <- binaryLogLikelihood(ncsDataInt, 16)
+ncs_LRT <- -2 * (ncs_LogLikelihood_MTP2 - ncs_LogLikelihood_noMTP2)
+ncs_LRT_full <- -2 * (ncs_LogLikelihood_noMTP2 - ncs_LogLikelihood_full)
+ncs_LRT_full_mtp2 <- -2 * (ncs_LogLikelihood_MTP2 - ncs_LogLikelihood_full)
+```
+
+```{r}
+#simLRT_ncs2 <- c()
+#simLRT_full_mtp2_ncs <- c()
+#simLRT_ncs2_20000 <- c()
+#simLRT_full_mtp2_ncs_20000 <- c()
+simLRT_ncs2_100000 <- c()
+simLRT_full_mtp2_ncs_100000 <- c()
+for(i in 1:999) {
+  Listsample <- IsingSampler(p = ncsfit_MTP2$p_hat, N = 100000, obs = TRUE, int = TRUE) #20000, dim(ncsDataReduced)[1]
+  sample <- Listsample$observations
+  intSample <- Listsample$observations_int
+  #sample <- IsingSampler(p = ncsfit_MTP2$p_hat, N = dim(ncsDataReduced)[1])
+  fit_mtp2 <- Ising_MLE_rcpp_LRT(ncsG, data = sample, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 200)
+  fit_nomtp2 <- Ising_MLE_noMTP2_rcpp_LRT(ncsG, data = sample, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 2000)
+  LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_mtp2$p_hat)
+  LogLikelihood_noMTP2 <-IsingLogLikelihood(as.matrix(sample), p = fit_nomtp2$p_hat)
+  LogLikelihood_full <- binaryLogLikelihood(intSample, 16)
+  simLRT_ncs2_100000[i] <- -2 * (LogLikelihood_MTP2 - LogLikelihood_noMTP2)
+  simLRT_full_mtp2_ncs_100000[i] <- -2 * (LogLikelihood_MTP2 - LogLikelihood_full)
+  print(i)
+}
+```
+
+```{r}
+#simLRT_ncs_full <- c()
+#simLRT_ncs_full_20000 <- c()
+simLRT_ncs_full_100000 <- c()
+for(i in 1:999) {
+  Listsample <- IsingSampler(p = ncsfit_noMTP2$p_hat, N = 100000, obs = TRUE, int = TRUE) # dim(ncsDataReduced)[1], 20000, 100000
+  sample <- Listsample$observations
+  intSample <- Listsample$observations_int
+  fit_nomtp2 <- Ising_MLE_noMTP2_rcpp_LRT(ncsG, data = sample, epsilon = 1e-4, epsilon2 = 1e-4, maxiter = 2000)
+  LogLikelihood_noMTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_nomtp2$p_hat)
+  LogLikelihood_full <- binaryLogLikelihood(intSample, 16)
+  simLRT_ncs_full_100000[i] <- -2 * (LogLikelihood_noMTP2 - LogLikelihood_full)
+  print(i)
+}
+```
+
+```{r}
+pValue <- sum(simLRT_ncs2 > ncs_LRT) / 999
+df <- 39
+hist(simLRT_ncs2, probability = TRUE, breaks = 40, xlim = c(0, ncs_LRT+10))
+abline(v = ncs_LRT, col = "black", lwd = 2)
+curve(dchisq(x, df), from=0, to=170, n=1001, add = TRUE, lwd = 2, col = "red")
+lines(density(simLRT_ncs2))
+hist(simLRT_ncs2, probability = TRUE, breaks = 30)
+curve(dchisq(x, df), from=0, to=100, n=1001, add = TRUE)
+
+hist(simLRT_full_mtp2_ncs, probability = TRUE, breaks = 40, xlim = c(2000, ncs_LRT_full_mtp2+100))
+abline(v = ncs_LRT_full_mtp2, col = "black", lwd = 2)
+hist(simLRT_full_mtp2_ncs, probability = TRUE, breaks = 30, xlim = c(2200, 2900))
+curve(dchisq(x, 2570), from=2200, to=2900, n=1401, add = TRUE)
+curve(dnorm(x, mean(simLRT_full_mtp2_ncs), sd(simLRT_full_mtp2_ncs)), from=2200, to=2900, n=1401, add = TRUE, col="red")
+```
+
+```{r}
+#pValue <- sum(simLRT_ncs2_20000 > ncs_LRT) / 999
+df <- 38
+hist(simLRT_ncs2_20000, probability = TRUE, breaks = 40, xlim = c(0, ncs_LRT+10))
+abline(v = ncs_LRT, col = "black", lwd = 2)
+curve(dchisq(x, df), from=0, to=170, n=1001, add = TRUE, lwd = 2, col = "red")
+lines(density(simLRT_ncs2_20000), lwd = 2, col = "black")
+hist(simLRT_ncs2_20000, probability = TRUE, breaks = 30)
+curve(dchisq(x, df), from=0, to=100, n=1001, add = TRUE, lwd = 2, col = "red")
+
+hist(simLRT_full_mtp2_ncs_20000, probability = TRUE, breaks = 40, xlim = c(2000, ncs_LRT_full_mtp2+100))
+abline(v = ncs_LRT_full_mtp2, col = "black", lwd = 2)
+hist(simLRT_full_mtp2_ncs_20000, probability = TRUE, breaks = 30, xlim = c(3200, 4200), ylim = c(0,0.005))
+curve(dchisq(x, 3779), from=3200, to=4200, n=1401, add = TRUE, lwd = 2, col = "red")
+#curve(dnorm(x, mean(simLRT_full_mtp2_ncs), sd(simLRT_full_mtp2_ncs)), from=2200, to=2900, n=1401, add = TRUE, col="red")
+```
+
+```{r eval=FALSE, include=FALSE}
+setwd("D:/universitet/matematik/speciale/R")
+save(simLRT_ncs2, file = "ncsLRT2.RData")
+
+save(simLRT_ncs2, simLRT_ncs_full, simLRT_full_mtp2_ncs, simLRT_ncs2_20000, simLRT_ncs_full_20000, simLRT_full_mtp2_ncs_20000, 
+     simLRT_ncs2_100000, simLRT_ncs_full_100000, simLRT_full_mtp2_ncs_100000,
+     file = "ncsLRTsims.RData")
+```
+
+```{r eval=FALSE, include=FALSE}
+setwd("D:/universitet/matematik/speciale/R")
+load(file = "ncsLRT2.RData")
+load(file = "ncsLRTsims.RData")
+```
+
+```{r}
+par(mfrow = c(1,3), cex = 1.1)
+hist(simLRT_ncs2, probability = TRUE, breaks = 50, xlim = c(10, ncs_LRT+1), 
+     main = TeX(r'($\Lambda(I,$ $I_2)$ for NCS data)', bold = TRUE), xlab =  TeX(r'($\Lambda(I,$ $I_2)$)'))
+abline(v = ncs_LRT, col = "red")
+
+hist(simLRT_ncs_full, probability = TRUE, breaks = 50, xlim = c(2200, ncs_LRT_full+10),
+     main = TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I)$ for NCS data)', bold = TRUE), xlab =  TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I)$)'))
+abline(v = ncs_LRT_full, col = "red")
+
+hist(simLRT_full_mtp2_ncs, probability = TRUE, breaks = 50, xlim = c(2200, ncs_LRT_full_mtp2+10),
+     main = TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I_2)$ for NCS data)', bold = TRUE), xlab =  TeX(r'($\Lambda(P(\{-1,1\}^4),$ $I_2)$)'))
+abline(v = ncs_LRT_full_mtp2, col = "red")
+```
+
+```{r}
+(pValue_Ising_mtp2_ncs <- sum(simLRT_ncs2 > ncs_LRT) / 999)
+(pValue_full_Ising_ncs <- sum(simLRT_ncs_full > ncs_LRT_full) / 999)
+(pValue_full_mtp2_ncs <- sum(simLRT_full_mtp2_ncs > ncs_LRT_full_mtp2) / 999)
+```
+
+```{r}
+par(mfrow=c(2,3))#, cex = 1.2
+mixchisq <- function(x) {(0.44 * dchisq(x, 1) + 0.2 * dchisq(x, 2) + 0.36 * dchisq(x, 3)) / (1 - mean(test_LRT_sim_10000==0))}
+hist(simLRT_ncs2, probability = TRUE, breaks = 50, xlim = c(0, 80), ylim = c(0,0.06), 
+     main = TeX(r'($\Lambda_{9282}(I,$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{9282}(I,$ $I_2)$)'))
+#curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+hist(simLRT_ncs2_20000, probability = TRUE, breaks = 50, xlim = c(0, 80), ylim = c(0,0.06), 
+     main = TeX(r'($\Lambda_{20000}(I,$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{20000}(I,$ $I_2)$)'))
+#curve(mixchisq, from=0, to=20, n=201, add = TRUE, col="red", lwd = 2)
+hist(simLRT_ncs2_100000, probability = TRUE, breaks = 50, xlim = c(0, 80), ylim = c(0,0.06), 
+     main = TeX(r'($\Lambda_{100000}(I,$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{100000}(I,$ $I_2)$)'))
+curve(dchisq(x, 35), from=0, to=80, n=801, add = TRUE, col="red", lwd = 2)
+
+mixchisqfullmtp2 <- function(x) {(0.22 * dchisq(x, 8) + 0.6 * dchisq(x, 7) + 0.18 * dchisq(x, 6)) / (1 - mean(test_LRT_full_mtp2_sim_10000==0))}
+hist(simLRT_full_mtp2_ncs, probability = TRUE, breaks = 50, xlim = c(2250, 8500), ylim = c(0,0.006), 
+     main = TeX(r'($\Lambda_{9282}(P(\{-1,1\}^4),$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{9282}(P(\{-1,1\}^4),$ $I_2)$)'))
+#curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+hist(simLRT_full_mtp2_ncs_20000, probability = TRUE, breaks = 50, xlim = c(2250, 8500), ylim = c(0,0.006), 
+     main = TeX(r'($\Lambda_{20000}(P(\{-1,1\}^4),$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{20000}(P(\{-1,1\}^4),$ $I_2)$)'))
+#curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+hist(simLRT_full_mtp2_ncs_100000, probability = TRUE, breaks = 50, xlim = c(2250, 8500), ylim = c(0,0.006), 
+     main = TeX(r'($\Lambda_{100000}(P(\{-1,1\}^4),$ $I_2)$ for NCS-R data)', bold = TRUE), xlab = TeX(r'($\Lambda_{100000}(P(\{-1,1\}^4),$ $I_2)$)'))
+#curve(mixchisqfullmtp2, from=0, to=30, n=201, add = TRUE, col="red", lwd = 2)
+```
+
+Simulated MTP$_2$ dataset:
+
+```{r}
+simh <- c(0.1, 0.3, -0.2, 0.2)
+simJ <- matrix(c(0, 1, 0.5, 0.3, 1, 0, 0.4, 0.2, 0.5, 0.4, 0, 0.1, 0.3, 0.2, 0.1, 0), 4, 4)
+set.seed(2021)
+simData <- IsingSampler(simh, simJ, N = 1000)
+```
+
+
+```{r}
+simG <- list(1:4, matrix(c(1, 2, 1, 3, 1, 4, 2, 3, 2, 4, 3, 4), 6, 2, T))
+sample_1_xBar <- calculatexBar(as.matrix(simData), dim(simData)[1], dim(simData)[2])
+sample_1_M <- calculateM(as.matrix(simData), dim(simData)[1], dim(simData)[2])
+simfit_MTP2 <- Ising_MLE_rcpp_LRT(data = simData, G = simG, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 200)
+simfit_noMTP2 <- Ising_MLE_noMTP2_rcpp_LRT(data = simData, G = simG, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 2000)
+```
+
+```{r}
+sim_LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(simData), p = simfit_MTP2$p_hat)
+sim_LogLikelihood_noMTP2 <-IsingLogLikelihood(as.matrix(simData), p = simfit_noMTP2$p_hat)
+sim_LRT <- -2 * (sim_LogLikelihood_MTP2 - sim_LogLikelihood_noMTP2)
+```
+
+```{r}
+simLRT_sim <- c()
+for(i in 1:9999) {
+  sample <- IsingSampler(p = simfit_MTP2$p_hat, N = dim(simData)[1])
+  fit_mtp2 <- Ising_MLE_rcpp_LRT(simG, data = sample, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 200)
+  fit_nomtp2 <- Ising_MLE_noMTP2_rcpp_LRT(simG, data = sample, epsilon = 1e-9, epsilon2 = 1e-9, maxiter = 2000)
+  LogLikelihood_MTP2 <- IsingLogLikelihood(as.matrix(sample), p = fit_mtp2$p_hat)
+  LogLikelihood_noMTP2 <-IsingLogLikelihood(as.matrix(sample), p = fit_nomtp2$p_hat)
+  simLRT_sim[i] <- -2 * (LogLikelihood_MTP2 - LogLikelihood_noMTP2)
+}
+```
+
+```{r}
+pValue_sim <- sum(simLRT_sim >= sim_LRT) / 9999
+df <- 39
+hist(LRT, probability = TRUE, breaks = 40)
+abline(v = sim_LRT, col = "red")
+#curve(dchisq(x, df), from=0, to=170, n=1001, add = TRUE)
+hist(LRT, probability = TRUE, breaks = 50, ylim = c(0,0.1))
+#curve(dchisq(x, df), from=0, to=100, n=1001, add = TRUE)
+```
+
+
+
+
+
+
+
+
