@@ -21,13 +21,13 @@ GLarge <- list(1:4, matrix(c(1, 2, 1, 3, 1, 4, 2, 3, 2, 4, 3, 4), 6, 2, T))
 GNull <- list(1:4, matrix(c(1, 2, 1, 3, 1, 4, 2, 3, 2, 4, 3, 4), 6, 2, T))
 
 cl <- makeCluster(4)
-clusterEvalQ(cl, {
-  library(parallel)
-  library(ising)
-})
+#clusterEvalQ(cl, {
+#  library(parallel)
+#  library(ising)
+#})
 #clusterExport(cl, c("IsingSampler", "IntToSign", "computeP", "IsingMLE", "calculateNewPAndEHatnoMTP2", "calculateNewPAndEHatnoMTP2Boundary", "IsingMLEmtp2", "calculateNewPAndEHat", "calculateNewPAndEHatBoundary", "calculatexBar", "calculateM", "createP", "calculateNewMu", "calculateNewXi", "createEPlus", "calculateCondition", "calculateCondition2", "CalculateEmpirical", "calculateH", "IsingLogLikelihood", "IsingLogLikelihoodhJ", "IsingLogLikelihoodProbs", "binaryLogLikelihood"))
 ejaList <- sapply(1:10, list)
-res <- parSapply(cl, ejaList, bootstrapLikelihoodRatio, p = p, d = d, N = N, largeModel = largeModel, nullModel = nullModel, epsilon = epsilon, GLarge = GLarge, GNull = GNull)
+res2 <- parSapply(cl, ejaList, bootstrapLikelihoodRatio, p = p, d = d, N = N, largeModel = largeModel, nullModel = nullModel, epsilon = epsilon, GLarge = GLarge, GNull = GNull)
 stopCluster(cl)
 
 bootstrapLikelihoodRatio(1, p, d, N, largeModel, nullModel, epsilon, GLarge, GNull)

@@ -1,2 +1,4 @@
 importFrom("stats", "na.omit")
 exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp,evalCpp)
+useDynLib(ising, .registration = TRUE)

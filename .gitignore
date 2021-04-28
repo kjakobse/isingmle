@@ -37,3 +37,11 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Cpp ignores
+*.o
+*.dll
+src-i386
+src-x64
+RcppExports.R
+ising.Rd
