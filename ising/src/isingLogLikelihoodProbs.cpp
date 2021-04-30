@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param p <to be documented>
 //' @return double <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 double isingLogLikelihoodProbs(NumericMatrix data, NumericVector p) {
   int d = data.ncol();

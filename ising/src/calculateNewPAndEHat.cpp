@@ -12,7 +12,7 @@ using namespace Rcpp;
 //' @param iter <to be documented>
 //' @return List <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 List calculateNewPAndEHat(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat, NumericMatrix capitalJ, int iter) {
   int ePlusDim = ePlus.nrow();

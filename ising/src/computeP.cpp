@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param J <to be documented>
 //' @return <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericVector computeP(NumericVector h, NumericMatrix J) {
   int d = h.size();

@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param J <to be documented>
 //' @return double <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 double isingLogLikelihoodhJ(NumericMatrix data, NumericVector h, NumericMatrix J) {
   int d = h.size();

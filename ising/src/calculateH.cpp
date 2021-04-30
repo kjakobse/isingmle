@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param p <to be documented>
 //' @return NumericVector <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericVector calculateH(int d, NumericVector p) {
   NumericVector h(d);

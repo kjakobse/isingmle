@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param d <to be documented>
 //' @return NumericMatrix <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericMatrix calculateM(NumericMatrix data, unsigned long long int length, int d) {
   NumericMatrix matrixM(d, d);

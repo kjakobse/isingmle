@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param d <to be documented>
 //' @return NumericMatrix <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericMatrix calculateNewXi(NumericVector p, int d) {
   NumericMatrix xi(d, d);

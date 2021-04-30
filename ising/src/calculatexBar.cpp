@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param d <to be documented>
 //' @return NumericVector <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericVector calculatexBar(NumericMatrix data, unsigned long long int length, int d) {
   NumericVector xBar(d);

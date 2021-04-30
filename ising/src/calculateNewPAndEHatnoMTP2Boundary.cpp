@@ -10,7 +10,7 @@ using namespace Rcpp;
 //' @param eHat <to be documented>
 //' @return List <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat) {
   int ePlusDim = ePlus.nrow();

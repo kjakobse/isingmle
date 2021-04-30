@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param d <to be documented>
 //' @return <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 double binaryLogLikelihood(NumericVector intData, int d) {
   unsigned long long int length = intData.size();

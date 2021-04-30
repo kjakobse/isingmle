@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param xBar <to be documented>
 //' @return NumericMatrix <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericMatrix createEPlus(NumericMatrix e, NumericMatrix m, NumericVector xBar) {
   int nRows = e.nrow();

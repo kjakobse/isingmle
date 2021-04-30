@@ -41,8 +41,9 @@ vignettes/*.pdf
 # Cpp ignores
 *.o
 *.dll
-src-i386
-src-x64
+ising/src-i386
+ising/src-x64
 RcppExports.cpp
 RcppExports.R
 ising.Rd
+ising/man

@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param xi <to be documented>
 //' @return NumericVector <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericVector calculateCondition(NumericMatrix eHatOmitNA, NumericMatrix m, NumericMatrix xi) {
   int nRows = eHatOmitNA.nrow();

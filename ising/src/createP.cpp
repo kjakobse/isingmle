@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' @param d <to be documented>
 //' @return NumericVector <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 NumericVector createP(NumericVector mu, int d) {
   unsigned long long int pLength = pow(2, d);

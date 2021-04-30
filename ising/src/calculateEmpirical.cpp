@@ -8,7 +8,7 @@ using namespace Rcpp;
 //' @param xBar <to be documented>
 //' @return List <to be documented>
 //' @export
-//
+//'
 // [[Rcpp::export]]
 List calculateEmpirical(NumericMatrix ePlus, NumericMatrix m, NumericVector xBar) {
   int ePlusDim = ePlus.nrow();
