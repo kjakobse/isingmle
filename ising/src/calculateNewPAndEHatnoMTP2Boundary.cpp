@@ -68,8 +68,6 @@ List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatri
     } else {
       q00 = e(t, 3) / p00;
     }
-    eHat(t, 0) = i;
-    eHat(t, 1) = j;
 
     for (unsigned long long int u = 0; u < pLength; u++) {
       if (u & iMask) {
@@ -85,6 +83,37 @@ List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatri
           p[u] = p[u] * q00;
         }
       }
+    }
+
+    unsigned long long int v1 = 0;
+    unsigned long long int v2 = iMask;
+    unsigned long long int v3 = jMask;
+    unsigned long long int v4 = iMask | jMask;
+
+    double capitalJ = 0;
+    unsigned long long int indexLength = pow(2, d-2);
+    for(unsigned long long int index = 0; index < indexLength; index++) {
+      if(jMask & index) {
+        index += jMask;
+      }
+      if(iMask & index) {
+        index += iMask;
+      }
+      if(jMask & index) {
+        index += jMask;
+      }
+      if(p[v1 + index] > 1e-15 && p[v2 + index] > 1e-15 && p[v3 + index] > 1e-15 && p[v4 + index] > 1e-15) {
+        capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
+        break;
+      }
+    }
+
+    if(abs(capitalJ) < 1e-15) {
+      eHat(t, 0) = NA_REAL;
+      eHat(t, 1) = NA_REAL;
+    } else {
+      eHat(t, 0) = i;
+      eHat(t, 1) = j;
     }
   }
 

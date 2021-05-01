@@ -81,9 +81,8 @@ List calculateNewPAndEHatBoundary(NumericMatrix ePlus, int d, NumericMatrix e, N
       unsigned long long int v4 = iMask | jMask;
 
       double capitalJ = 0;
-      unsigned long long int wLength = pow(2, d-2);
-      unsigned long long int index = 0;
-      for(unsigned long long int w = 0; w < wLength; w++) {
+      unsigned long long int indexLength = pow(2, d-2);
+      for(unsigned long long int index = 0; index < indexLength; index++) {
         if(jMask & index) {
           index += jMask;
         }
@@ -97,7 +96,6 @@ List calculateNewPAndEHatBoundary(NumericMatrix ePlus, int d, NumericMatrix e, N
           capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
           break;
         }
-        index++;
       }
 
       if (delta + capitalJ > 0) { //changed >= to >
