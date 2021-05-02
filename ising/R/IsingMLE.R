@@ -20,6 +20,7 @@
 #' @return \code{IsingMLE} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged. Expand on this!
 #' @export
 IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L){
+  # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) {stop("G must be a list of length two.")}
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) { stop("G must contain a vector with vertices and a matrix with two columns having edges in the rows.")}
   V <- seq_along(G[[1]])
@@ -28,6 +29,7 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
     E[G[[2]] == G[[1]][i]] <- i
   }
 
+  # Initiate the mean value parameter mu with the empirical value. If not given directly the empirical moments are calculated from the provided data set:
   if (is.null(data)) {
     if (is.null(xBar) | is.null(M)) {
       stop ("Must input either a data set or sufficient statistics")
@@ -39,30 +41,23 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
     mu <- xBar
   }
 
-  #if(!(all(abs(xBar) < 1))) {
-  #  stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical mean contains 1 or -1."))
-  #}
-
+  # initiate d, the number of binary variables:
   d <- length(mu)
 
-  #mCond <- matrix(0, d, d)
-  #for(i in (1+seq_len(d-1))) {
-  #  for(j in seq_len(i-1))
-  #    mCond[i] <- M[i, j]
-  #}
-  #if(!(all(abs(mCond) < 1))) {
-  #  stop(cat("input doesn't fulfill conditions for existance of MLE.\nEmpirical correlation matrix contains 1 or -1."))
-  #}
-
+  # initiate the mean value parameter Xi:
   Xi <- diag(d)
 
+  # initiate the distribution given by mu and Xi:
   p <- createP(mu, d)
 
+  # initiate a matrix for the edges of the fitted graph G_hat:
   eHat <- matrix(NA, nrow(E), 2)
   eHatOmitNA <- na.omit(eHat)
 
+  # Initiate the condition on Xi. Inf ensures that the statement max(condition > epsilon) is always true initially:
   condition <- c(Inf)
 
+  # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
   empiricalList <- calculateEmpirical(E, M, xBar)
   empirical <- empiricalList$empirical
   containsZeroes <- empiricalList$containsZeroes
@@ -70,20 +65,24 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
     stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
   }
 
+  # If the empirical distribution contains zeroes a version of the algorithm converging on the boundary is used:
   if (containsZeroes) {
     iter <- 0L
+    # While loop updating the distribution until the convergence criteria is meet or the max number of iterations is reached:
     while ((iter < maxIter) & (max(abs(mu-xBar)) > epsilon | max(condition) > epsilon)){
+      # Update the distribution for each variable pair in E, and update the edges in the fitted graph:
       pAndEHatResult <- calculateNewPAndEHatnoMTP2Boundary(E, d, empirical, p, eHat)
       p <- pAndEHatResult$p
       eHat <- pAndEHatResult$eHat
 
+      # Calculate the updated values of the mean value parameters:
       mu <- calculateNewMu(p, d)
       Xi <- calculateNewXi(p, d)
 
       eHatOmitNA <- na.omit(eHat)
 
+      # Calculate the updated condition in the convergence criteria:
       condition <- calculateCondition(eHatOmitNA, M, Xi);
-      condition2 <- calculateCondition2(E, M, Xi);
 
       iter <- iter + 1L
     }
@@ -93,44 +92,54 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
     }
     warning ("Maximum likelihood estimate is on the boundary")
 
+    # Recode the vertices in G to the names specified in the input:
     for (i in V) {
       eHatOmitNA[eHatOmitNA == V[i]] <- G[[1]][i]
     }
     attr(eHatOmitNA, "na.action") <- NULL
     attr(eHatOmitNA, "class") <- NULL
 
+    # Return the fitted distribution, graph, mean value parameters and number of iterations until convergence:
     return (list(p_hat = p, G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA), mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter))
   } else {
     iter <- 0L
+    # Initiate a matrix for the canonical parameter J:
     capitalJ <- matrix(0, d, d)
+    # While loop updating the distribution until the convergence criteria is meet or the max number of iterations is reached:
     while ((iter < maxIter) & (max(abs(mu-xBar)) > epsilon | max(condition) > epsilon)){
-      pAndEHatResult <- calculateNewPAndEHatnoMTP2(E, d, empirical, p, eHat, capitalJ, iter)
+      # Update the distribution for each variable pair in E, update the edges in the fitted graph, and calculate the value of the canonical parameter J for the updated Ising model:
+      pAndEHatResult <- calculateNewPAndEHatnoMTP2(E, d, empirical, p, eHat, capitalJ)
       p <- pAndEHatResult$p
       eHat <- pAndEHatResult$eHat
       capitalJ <- pAndEHatResult$J
 
+      # Calculate the updated values of the mean value parameters:
       mu <- calculateNewMu(p, d)
       Xi <- calculateNewXi(p, d)
 
       eHatOmitNA <- na.omit(eHat)
 
+      # Calculate the updated condition in the convergence criteria:
       condition <- calculateCondition(eHatOmitNA, M, Xi);
 
       iter <- iter + 1L
     }
 
+    # Calculate the canonical parameter h for the fitted Ising model:
     h <- calculateH(d, p);
 
     if (iter >= maxIter) {
       warning ("MLE did not converge; maximum number of iterations reached")
     }
 
+    # Recode the vertices in G to the names specified in the input:
     for (i in V) {
       eHatOmitNA[eHatOmitNA == V[i]] <- G[[1]][i]
     }
     attr(eHatOmitNA, "na.action") <- NULL
     attr(eHatOmitNA, "class") <- NULL
 
+    # return the fitted distribution, graph, mean value parameters, the canonical parameters, and number of iterations until convergence:
     return (list(p_hat = p, G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA), mu_hat = mu, Xi_hat = Xi, h_hat = h, J_hat = capitalJ, number_of_iterations = iter))
   }
 }

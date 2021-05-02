@@ -1,20 +1,21 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' calculateNewPAndEHatnoMTP2 <to be documented>
+//' Updates the distribution of the Ising model and the fitted graph
 //'
-//' @param ePlus <to be documented>
-//' @param d <to be documented>
-//' @param e <to be documented>
-//' @param p <to be documented>
-//' @param eHat <to be documented>
-//' @param capitalJ <to be documented>
-//' @param iter <to be documented>
-//' @return List <to be documented>
+//' \code{calculateNewPAndEHatnoMTP2} is intended to be used by \code{IsingMLE}. It updates the distribution p for the edges in ePlus when the empirical distributions don't contain zeroes.
+//'
+//' @param ePlus NumericMatrix containing the edges of G to update p over.
+//' @param d Integer containing the number of binary variables.
+//' @param e NumericMatrix containing the empirical distributions for the edges in ePlus.
+//' @param p NumericVector containing the distribution to be updated.
+//' @param eHat NumericMatrix containing the edges in the independence graph of the distribution p.
+//' @param capitalJ NumericMatrix containing the canonical parameter J
+//' @return \code{calculateNewPAndEHatnoMTP2} returns a list containing the updated distribution its independence graph and the canonical parameter J.
 //' @export
 //'
 // [[Rcpp::export]]
-List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat, NumericMatrix capitalJ, int iter) {
+List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat, NumericMatrix capitalJ) {
   int ePlusDim = ePlus.nrow();
   unsigned long long int pLength = p.size();
   for (int t = 0; t < ePlusDim; t++) {
@@ -50,15 +51,6 @@ List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus, int d, NumericMatrix e, Num
     double q01 = e(t, 2) / p01;
     double q00 = e(t, 3) / p00;
 
-    unsigned long long int v1 = 0;
-    unsigned long long int v2 = iMask;
-    unsigned long long int v3 = jMask;
-    unsigned long long int v4 = iMask | jMask;
-    if(iter == 0) {
-      capitalJ(i-1, j-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
-      capitalJ(j-1, i-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
-    }
-
     for (unsigned long long int u = 0; u < pLength; u++) {
       if (u & iMask) {
         if (u & jMask) {
@@ -75,6 +67,10 @@ List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus, int d, NumericMatrix e, Num
       }
     }
 
+    unsigned long long int v1 = 0;
+    unsigned long long int v2 = iMask;
+    unsigned long long int v3 = jMask;
+    unsigned long long int v4 = iMask | jMask;
     capitalJ(i-1, j-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
     capitalJ(j-1, i-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
 
