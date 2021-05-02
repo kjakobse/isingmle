@@ -7,9 +7,9 @@
 IntToSign(x, digits)
 }
 \arguments{
-\item{x}{Integer}
+\item{x}{Integer.}
 
-\item{digits}{Integer specifying how many digits should be returned}
+\item{digits}{Integer specifying how many digits should be returned.}
 }
 \value{
 \code{IntToSign} returns a vector with length equal to digits, containing the sign representation of the input integer.

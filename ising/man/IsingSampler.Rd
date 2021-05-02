@@ -2,36 +2,40 @@
 % Please edit documentation in R/IsingSampler.R
 \name{IsingSampler}
 \alias{IsingSampler}
-\title{IsingSampler <to be documented>}
+\title{Generate data sets from the Ising model}
 \usage{
 IsingSampler(
   h = NULL,
   J = NULL,
   p = NULL,
-  N = 1000,
+  N = 1000L,
   obs = TRUE,
   int = FALSE,
   matrix = FALSE
 )
 }
 \arguments{
-\item{h}{<to be documented>}
+\item{h}{Vector, specifying the canonical parameter h from the Ising model. Optional if p is specified.}
 
-\item{J}{<to be documented>}
+\item{J}{Matrix, specifying the canonical parameter J from the Ising model. Optional if p is specified.}
 
-\item{p}{<to be documented>}
+\item{p}{Vector, specifying the distribution of the Ising model. Optional if h and J are specified.}
 
-\item{N}{<to be documented>}
+\item{N}{Integer, specifying the number of observations in the generated data set.}
 
-\item{obs}{<to be documented>}
+\item{obs}{Logical, if TRUE the observations are returned in binary form.}
 
-\item{int}{<to be documented>}
+\item{int}{Logical, if TRUE, the observations are returned as integers.}
 
-\item{matrix}{<to be documented>}
+\item{matrix}{Logical, if TRUE the binary form of the observations are returned in a matrix. If FALSE the observations are returned in a data frame.}
 }
 \value{
-<to be documented>
+\code{IsingSampler} returns a simulated data set of length N from the Ising model specified by h and J or by p. The observations are returned in binary form if the obs parameter is TRUE, and as integers if the parameter int is TRUE. The matrix parameter controls if the observations in binary form are returned in a matrix or in a data frame.
 }
 \description{
-IsingSampler <to be documented>
+\code{IsingSampler} generates a data set of a specified length from an Ising model.
+}
+\details{
+The matrix J should be symmetric and have zeroes in the diagonal. \cr
+The probability at index i in p is assumed to correspond with the probability of the observation where replacing -1 with 0 gives the binary representation of the index.
 }
