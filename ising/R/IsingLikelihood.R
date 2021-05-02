@@ -1,10 +1,15 @@
-#' IsingLogLikelihood <to be documented>
+#' Calculate log-likelihood in Ising models
 #'
-#' @param data <to be documented>
-#' @param h <to be documented>
-#' @param J <to be documented>
-#' @param p <to be documented>
-#' @return <to be documented>
+#' \code{IsingLogLikelihood} calculates the log-likelihood of a data set for a specified Ising model.
+#'
+#' Detailed description. The function must be provided with either the natural parameters h and J or the distribution p.
+#' the i'th entry of p must contain the probability of the observation which has binary value equal to i when -1 is encoded as 0.
+#'
+#' @param data Matrix or data frame containing observations from d binary variables.
+#' @param h Vector containing the canonical parameters h.
+#' @param J Matrix containing the canonical parameters J.
+#' @param p Vector containing the distribution of the Ising model.
+#' @return \code{IsingLogLikelihood} returns a numeric value with the log-likelihood of the data set for the specified Ising model.
 #' @export
 IsingLogLikelihood <- function(data, h = NULL, J = NULL, p = NULL) {
   if(is.null(h) & is.null(J) & !is.null(p)) {

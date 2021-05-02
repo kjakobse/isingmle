@@ -1,21 +1,27 @@
 library(Rcpp)
 
-#' IntToSign <to be documented>
+#' Convert integer to binary with 0 represented with -1 and 1 represented with 1
 #'
-#' @param x <to be documented>
-#' @param dig <to be documented>
-#' @return <to be documented>
+#' \code{IntToSign} converts an integer to a binary number where 0 is represented with -1 and 1 is represented with 1.
+#'
+#' @param x Integer
+#' @param digits Integer specifying how many digits should be returned
+#' @return \code{IntToSign} returns a vector with length equal to digits, containing the sign representation of the input integer.
 #' @export
-IntToSign <- function(x, dig) {
+IntToSign <- function(x, digits) {
   i <- 0L
-  string <- rep(-1, dig)
+  Sign <- rep(-1, digits)
   while (x > 0) {
-    if(x %% 2L == 0) string[dig - i] <- -1
-    else string[dig - i] <- 1
+    if(x %% 2L == 0) {
+      Sign[digits - i] <- -1
+    }
+    else {
+      Sign[digits - i] <- 1
+    }
     x <- x %/% 2L
     i <- i + 1L
   }
-  string
+  Sign
 }
 
 #' IsingSampler <to be documented>

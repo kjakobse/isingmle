@@ -2,18 +2,18 @@
 % Please edit documentation in R/IsingSampler.R
 \name{IntToSign}
 \alias{IntToSign}
-\title{IntToSign <to be documented>}
+\title{Convert integer to binary with 0 represented with -1 and 1 represented with 1}
 \usage{
-IntToSign(x, dig)
+IntToSign(x, digits)
 }
 \arguments{
-\item{x}{<to be documented>}
+\item{x}{Integer}
 
-\item{dig}{<to be documented>}
+\item{digits}{Integer specifying how many digits should be returned}
 }
 \value{
-<to be documented>
+\code{IntToSign} returns a vector with length equal to digits, containing the sign representation of the input integer.
 }
 \description{
-IntToSign <to be documented>
+\code{IntToSign} converts an integer to a binary number where 0 is represented with -1 and 1 is represented with 1.
 }
