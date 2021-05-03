@@ -17,7 +17,7 @@
 #' @param data An optional matrix or data frame containing observations from d binary variables with outcomes coded as -1 and 1.
 #' @param epsilon A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.
 #' @param maxIter An integer specifying the maximum number of iterations to run the algorithm.
-#' @return \code{IsingMLE} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged. Expand on this!
+#' @return \code{IsingMLE} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
 #' @export
 IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L){
   # Encode the vertices in G as the integers from 1 to d:
@@ -55,6 +55,7 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
   eHatOmitNA <- na.omit(eHat)
 
   # Initiate the condition on Xi. Inf ensures that the statement max(condition > epsilon) is always true initially:
+  # condition checks if the difference between Xi and M for entries in E_hat are zero.
   condition <- c(Inf)
 
   # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:

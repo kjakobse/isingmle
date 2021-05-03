@@ -1,10 +1,13 @@
 library(parallel)
 
-#' Calculate values of the likelihood ratio test statistic using simulated data.
+#' Calculate values of the log-likelihood ratio test statistic using simulated data.
 #'
-#' \code{LikelihoodRatioTest} simulates data sets from a specified null-distribution and for each calculates the likelihood ratio test statistic for the test against the assumed model.
+#' \code{LikelihoodRatioTest} simulates data sets from a specified null-distribution and for each calculates the log-likelihood ratio test statistic for the test against the assumed model.
 #'
-#' Detailed description.
+#' Detailed description. The function uses the parallel implementation in \code{parSapply} to allow running multiple simulations at a time.
+#' The parameter nCores should not exceed the number of logical cores on the host system.
+#' For larger values of d available memory also needs to be considered since the memory requirements scale linearly with the value of nCores. \cr
+#' As is standard for hypothesis testing the large model should contain the null model.
 #'
 #' @param nSim Integer specifying number of simulations
 #' @param p Vector containing the distribution of the null model.
@@ -23,7 +26,10 @@ likelihoodRatioTest <- function(nSim, p, d, N, largeModel, nullModel, epsilon, G
   if (!is.numeric(nSim) || ((nSim %% 1) != 0) || (nSim < 1)) {
     stop("nSim must be an integer of value greater than zero")
   }
+  # initialize a list of length nSim containing the list index:
   nList <- sapply(1:nSim, list)
+  # If nCores is one, bootstrapLikelihoodRatio is called with sapply to create a vector of log-likelihood ratio test statistics.
+  # If nCores is larger than one, bootstrapLikelihoodRatio is called with parSapply to create a vector of log-likelihood ratio test statistics.
   if (nCores == 1) {
     res <- sapply(nList, bootstrapLikelihoodRatio, p = p, d = d, N = N, largeModel = largeModel, nullModel = nullModel, epsilon = epsilon, GLarge = GLarge, GNull = GNull, maxIter = maxIter)
   } else {

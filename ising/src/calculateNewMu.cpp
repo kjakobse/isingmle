@@ -1,18 +1,20 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' calculateNewMu <to be documented>
+//' Calculate the mean vector from the distribution
 //'
-//' @param p <to be documented>
-//' @param d <to be documented>
-//' @return NumericVector <to be documented>
+//' \code{calculateNewMu} calculates the mean for each binary variable from the distribution of d binary variables.
+//'
+//' @param p NumericVector specifying the distribution of d binary variables.
+//' @param d Integer specifying the number of binary variables.
+//' @return \code{calculateNewMu} returns a numeric vector with the means.
 //' @export
 //'
 // [[Rcpp::export]]
 NumericVector calculateNewMu(NumericVector p, int d) {
   NumericVector mu(d);
   unsigned long long int pLength = p.size();
-
+// run through each variable and add up observation*probability:
   for (int t = 0; t < d; t++) {
     unsigned long long int uMask = 1 << (d - t - 1);
 

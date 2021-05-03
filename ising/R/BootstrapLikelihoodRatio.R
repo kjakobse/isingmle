@@ -17,9 +17,11 @@
 #' @return \code{bootstrapLikelihoodRatio} returns a numeric value with the likelihood ratio test statistic for the data set simulated under the null model.
 #' @export
 bootstrapLikelihoodRatio <- function(simNum, p, d, N, largeModel, nullModel, epsilon, GLarge = NULL, GNull = NULL, maxIter = 100L) {
+  # Generate a sample from the given null model with N observations:
   Listsample <- IsingSampler(p = p, N = N, obs = TRUE, int = TRUE, matrix = TRUE)
   sample <- Listsample$observations
   intSample <- Listsample$observations_int
+  # From the simulated data, calculate the log-likelihood for the specified null model:
   if (nullModel == "IsingMTP2") {
     if (is.null(GNull)) {
       stop ("GNull must be specified when nullModel is IsingMTP2")
@@ -35,6 +37,7 @@ bootstrapLikelihoodRatio <- function(simNum, p, d, N, largeModel, nullModel, eps
   } else {
     stop ("nullModel must be [\"Ising\" or \"IsingMTP2\"]")
   }
+  # From the simulated data, calculate the log-likelihood for the specified large model:
   if (largeModel == "Ising") {
     if (is.null(GLarge)) {
       stop ("GLarge must be specified when largeModel is Ising")
@@ -53,5 +56,6 @@ bootstrapLikelihoodRatio <- function(simNum, p, d, N, largeModel, nullModel, eps
     stop ("largeModel must be [\"Ising\", \"IsingMTP2\", or \"FullBinary\"]")
   }
 
+  # return the value of the log-likelihood ratio test statistic:
   return (-2 * (LogLikelihoodNull - LogLikelihoodLarge))
 }

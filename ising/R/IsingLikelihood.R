@@ -12,6 +12,7 @@
 #' @return \code{IsingLogLikelihood} returns a numeric value with the log-likelihood of the data set for the specified Ising model.
 #' @export
 IsingLogLikelihood <- function(data, h = NULL, J = NULL, p = NULL) {
+  # the functions calls lower level c++ functions based on whether h and J or p is specified.
   if(is.null(h) & is.null(J) & !is.null(p)) {
     IsingLogLikelihood <- isingLogLikelihoodProbs(data, p)
   } else if(!is.null(h) & !is.null(J) & is.null(p)) {
