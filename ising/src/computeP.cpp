@@ -6,7 +6,7 @@ using namespace Rcpp;
 //' \code{computeP} calculates the distribution of an Ising model from the canonical parameters h and J.
 //'
 //' The distribution p is returned in a vector where the index (using 0-indexing) corresponds to the base 10 value of the binary observation. \cr
-//' The probability p(x) is obtained using the formula \deqn{p(x)=\exp(h^T x+x^T J x/2-A(h,J))}, where A(h,J) is a normalisation constant.
+//' The probability p(x) is obtained using the formula \eqn{p(x) = e^(h^T * x + x^T * J * x / 2 - A(h,J))}, where A(h,J) is a normalisation constant.
 //'
 //' @param h Numeric vector specifying the canonical parameter h.
 //' @param J Matrix specifying the canonical parameter J.

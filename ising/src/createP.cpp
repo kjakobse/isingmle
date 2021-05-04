@@ -5,9 +5,9 @@ using namespace Rcpp;
 //'
 //' \code{createP} is intended to be used with \code{isingMLE} and \code{isingMLEmtp2}. It creates the vector p with the initial distribution that the algorithms start from.
 //'
-//' The initial distribution has the form \deqn{p(x)=2^{-|V|}\prod_{v\in V}(1+x_v\mu_v)}.
+//' The initial distribution has the form \eqn{p(x) = 2^{-|V|}\prod_{v \in V}(1 + x_v \mu_v).
 //'
-//' @param mu Numeric Vector specifying the mean of the distribution.
+//' @param mu Numeric vector specifying the mean of the distribution.
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{createP} returns a numeric vector with the distribution p.
 //' @export

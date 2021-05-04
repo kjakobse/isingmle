@@ -5,7 +5,7 @@ using namespace Rcpp;
 //'
 //' \code{isingLogLikelihoodhJ} calculates the value of the loglikelihood function for a given data set in the natural parameters h and J.
 //'
-//' The loglikelihood is calculated using the formula \deqn{l(h, J\mid data) = \sum_{x}\exp(h^T x+x^T J x/2-A(h,J))}, where A(h,J) is a normalisation constant.
+//' The loglikelihood is calculated using the formula \eqn{L(h,J|data) = \sum _{x} e^(h^T * x + x^T * J * x / 2 - A(h,J))}, where A(h,J) is a normalisation constant.
 //'
 //' @param data Matrix containing samples from d binary variables in the rows.
 //' @param h Numeric vector specifying the canonical parameter h.

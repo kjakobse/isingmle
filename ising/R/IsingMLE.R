@@ -4,7 +4,7 @@
 #'
 #' \code{IsingMLE} fits graphical Ising models using an IPS-type algorithm.
 #'
-#' Add detailed description.\cr The graph G specifies which undirected graph the maximum likelihood estimator should be Markov with respect to.
+#' The graph G specifies which undirected graph the maximum likelihood estimator should be Markov with respect to.
 #' The graph should be specified as a list with the first element being a vector containing the vertices of the graph and the second element
 #' being a matrix containing the edges in the rows. Make sure the naming of the vertices and the edges match.\cr
 #' If the maximum likelihood estimator is on the boundary of the parameter space only the mean value parameters will be returned.
