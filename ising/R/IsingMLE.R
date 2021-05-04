@@ -14,7 +14,7 @@
 #' @param G A list containing a vector with vertices and a matrix containing edges in the rows.
 #' @param xBar An optional vector containing the sample first moment of the data. Must be specified if data is unspecified.
 #' @param M An optional matrix containing the sample second moment of the data. Must be specified if data is unspecified.
-#' @param data An optional matrix or data frame containing observations from d binary variables with outcomes coded as -1 and 1.
+#' @param data An optional matrix or data frame containing samples from d binary variables with outcomes coded as -1 and 1.
 #' @param epsilon A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.
 #' @param maxIter An integer specifying the maximum number of iterations to run the algorithm.
 #' @return \code{IsingMLE} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.

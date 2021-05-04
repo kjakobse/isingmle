@@ -8,10 +8,10 @@ using namespace Rcpp;
 //' ePlus should contain the variable pairs for which the empirical distribution is to be calculated. They should be coded as integers from 1 up to the number of binary variables.
 //' The sample moments should be ordered according to this coding, so the sample mean of variable 1 should have index 1 in xBar (using 1-indexing).
 //'
-//' @param ePlus NumericMatrix containing pairs of variables in the rows.
-//' @param m NumericMatrix containing the sample second moment.
-//' @param xBar NumericVector containing the sample first moment.
-//' @return \code{CalculateEmpirical} returns a List containing a NumericMatrix with the calculated empirical distributions and an integer which is 1 of any of the empirical distributions contain zeroes and is 0 otherwise.
+//' @param ePlus Matrix containing pairs of variables in the rows.
+//' @param m Matrix containing the sample second moment.
+//' @param xBar Numeric vector containing the sample first moment.
+//' @return \code{CalculateEmpirical} returns a List containing a matrix with the calculated empirical distributions and an integer which is 1 of any of the empirical distributions contain zeroes and is 0 otherwise.
 //' @export
 //'
 // [[Rcpp::export]]

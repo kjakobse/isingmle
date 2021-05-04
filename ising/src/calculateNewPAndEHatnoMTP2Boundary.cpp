@@ -1,28 +1,33 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' calculateNewPAndEHatnoMTP2Boundary <to be documented>
+//' Updates the distribution of the Ising model on the boundary
 //'
-//' @param ePlus <to be documented>
-//' @param d <to be documented>
-//' @param e <to be documented>
-//' @param p <to be documented>
-//' @param eHat <to be documented>
-//' @return List <to be documented>
+//' \code{calculateNewPAndEHatnoMTP2Boundary} is intended to be used by \code{IsingMLE}. It updates the distribution p for the edges in ePlus when some of the empirical distributions contain zeroes.
+//'
+//' @param ePlus Matrix containing the edges of G to update p over.
+//' @param d Integer containing the number of binary variables.
+//' @param e Matrix containing the empirical distributions for the edges in ePlus.
+//' @param p Numeric vector containing the distribution to be updated.
+//' @param eHat Matrix containing the edges in the independence graph of the distribution p.
+//' @return \code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing the updated distribution and its independence graph.
 //' @export
 //'
 // [[Rcpp::export]]
 List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p, NumericMatrix eHat) {
   int ePlusDim = ePlus.nrow();
   unsigned long long int pLength = p.size();
+  // for loop over the edges in ePlus:
   for (int t = 0; t < ePlusDim; t++) {
     int i = ePlus(t, 0);
     int j = ePlus(t, 1);
+    // masks for the variables i and j. << is the bitwise and operator and shifts the bits to the left:
     int iCInternal = d - i;
     int jCInternal = d - j;
     unsigned long long int iMask = 1 << iCInternal;
     unsigned long long int jMask = 1 << jCInternal;
 
+    // calculate the marginal distribution of variables i and j:
     double p00 = 0.0;
     double p01 = 0.0;
     double p10 = 0.0;
@@ -48,6 +53,7 @@ List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatri
     double q01;
     double q00;
 
+    // calculate the factors with which to update the probabilities in p. If the empirical distribution is 0 the corresponding q is set equal to 0:
     if(abs(e(t, 0) < 1e-15) || abs(p11) < 1e-15) {
       q11 = 0;
     } else {
@@ -85,37 +91,42 @@ List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatri
       }
     }
 
-    unsigned long long int v1 = 0;
-    unsigned long long int v2 = iMask;
-    unsigned long long int v3 = jMask;
-    unsigned long long int v4 = iMask | jMask;
-
-    double capitalJ = 0;
-    unsigned long long int indexLength = pow(2, d-2);
-    for(unsigned long long int index = 0; index < indexLength; index++) {
-      if(jMask & index) {
-        index += jMask;
-      }
-      if(iMask & index) {
-        index += iMask;
-      }
-      if(jMask & index) {
-        index += jMask;
-      }
-      if(p[v1 + index] > 1e-15 && p[v2 + index] > 1e-15 && p[v3 + index] > 1e-15 && p[v4 + index] > 1e-15) {
-        capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
-        break;
-      }
-    }
-
-    if(abs(capitalJ) < 1e-15) {
-      eHat(t, 0) = NA_REAL;
-      eHat(t, 1) = NA_REAL;
-    } else {
+    // If one of the q's is zero ij is in E_hat, otherwise J_ij can be calculated:
+    if (abs(q11) < 1e-15 || abs(q10) < 1e-15 || abs(q01) < 1e-15 || abs(q00) < 1e-15) {
       eHat(t, 0) = i;
       eHat(t, 1) = j;
+    } else {
+      unsigned long long int v1 = 0;
+      unsigned long long int v2 = iMask;
+      unsigned long long int v3 = jMask;
+      unsigned long long int v4 = iMask | jMask;
+      // calculate J_ij by running through all combinations of the variables other than i and j until one has all probabilities positive:
+      double capitalJ = 0;
+      unsigned long long int indexLength = pow(2, d-2);
+      for(unsigned long long int index = 0; index < indexLength; index++) {
+        if(jMask & index) {
+          index += jMask;
+        }
+        if(iMask & index) {
+          index += iMask;
+        }
+        if(jMask & index) {
+          index += jMask;
+        }
+        if(p[v1 + index] > 1e-15 && p[v2 + index] > 1e-15 && p[v3 + index] > 1e-15 && p[v4 + index] > 1e-15) {
+          capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
+          break;
+        }
+      }
+      // If J_ij is zero the edge ij is not in the independence graph:
+      if(abs(capitalJ) < 1e-15) {
+        eHat(t, 0) = NA_REAL;
+        eHat(t, 1) = NA_REAL;
+      } else {
+        eHat(t, 0) = i;
+        eHat(t, 1) = j;
+      }
     }
   }
-
   return List::create(_["p"] = p, _["eHat"] = eHat);
 }

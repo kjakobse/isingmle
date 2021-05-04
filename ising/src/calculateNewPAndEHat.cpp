@@ -8,12 +8,12 @@ using namespace Rcpp;
 //' \code{calculateNewPAndEHat} doesn't use the value of eHat. It fills the matrix eHat with the edges of the independence graph after the update.\cr
 //' iter is used to indicate if the provided J should be used or not. If iter = 0 J is calculated and otherwise the provided J is used.
 //'
-//' @param ePlus NumericMatrix containing the edges of G to update p over.
+//' @param ePlus Matrix containing the edges of G to update p over.
 //' @param d Integer containing the number of binary variables.
-//' @param e NumericMatrix containing the empirical distributions for the edges in ePlus.
-//' @param p NumericVector containing the distribution to be updated.
-//' @param eHat NumericMatrix containing the edges in the independence graph of the distribution p.
-//' @param capitalJ NumericMatrix containing the canonical parameter J.
+//' @param e Matrix containing the empirical distributions for the edges in ePlus.
+//' @param p Numeric vector containing the distribution to be updated.
+//' @param eHat Matrix containing the edges in the independence graph of the distribution p.
+//' @param capitalJ Matrix containing the canonical parameter J.
 //' @param iter Integer specifying the iteration of the algorithm.
 //' @return \code{calculateNewPAndEHat} returns a list containing the updated distribution, its independence graph, and the canonical parameter J.
 //' @export

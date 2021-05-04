@@ -5,7 +5,7 @@ using namespace Rcpp;
 //'
 //' \code{calculateNewMu} calculates the mean for each binary variable from the distribution of d binary variables.
 //'
-//' @param p NumericVector specifying the distribution of d binary variables.
+//' @param p Numeric vector specifying the distribution of d binary variables.
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{calculateNewMu} returns a numeric vector with the means.
 //' @export

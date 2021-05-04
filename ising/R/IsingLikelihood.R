@@ -5,7 +5,7 @@
 #' Detailed description. The function must be provided with either the natural parameters h and J or the distribution p.
 #' the i'th entry of p must contain the probability of the observation which has binary value equal to i when -1 is encoded as 0.
 #'
-#' @param data Matrix or data frame containing observations from d binary variables.
+#' @param data Matrix or data frame containing samples from d binary variables.
 #' @param h Vector containing the canonical parameters h.
 #' @param J Matrix containing the canonical parameters J.
 #' @param p Vector containing the distribution of the Ising model.
