@@ -1,11 +1,12 @@
 Package: ising
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.2
+Title: Fit MTP2 Ising models
+Version: 0.1.3
 Author: Kim Daniel Jakobsen
 Maintainer: Kim Daniel Jakobsen <kimmsn@jc-aps.dk>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Compute the maximum likelihood estimator in Ising models with or without MTP2 restrictions and/or Markov restrictions.
+    Can handle estimates on the boundary of the parameter space. 
+    Also has a function to calculate likelihood ratio test statistics using multiple cores.
 License: EUPL
 Encoding: UTF-8
 LazyData: true
