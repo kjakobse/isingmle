@@ -2,7 +2,7 @@ library(parallel)
 
 #' Calculate values of the log-likelihood ratio test statistic using simulated data.
 #'
-#' \code{LikelihoodRatioTest} simulates data sets from a specified null-distribution and for each calculates the log-likelihood ratio test statistic for the test against the assumed model.
+#' \code{likelihoodRatioTest} simulates data sets from a specified null-distribution and for each calculates the log-likelihood ratio test statistic for the test against the assumed model.
 #'
 #' Detailed description. The function uses the parallel implementation in \code{parSapply} to allow running multiple simulations at a time.
 #' The parameter nCores should not exceed the number of logical cores on the host system.
@@ -20,7 +20,7 @@ library(parallel)
 #' @param GNull List containing vector of vertices and matrix of edges.
 #' @param maxIter Integer specifying maximum number of iterations to run the fitting algorithm.
 #' @param nCores Integer specifying the number of cores to use for the simulation.
-#' @return \code{LikelihoodRatioTest} returns a vector of length nSim with the likelihood ratio test statistics for the data set simulated under the null model.
+#' @return \code{likelihoodRatioTest} returns a vector of length nSim with the likelihood ratio test statistics for the data set simulated under the null model.
 #' @export
 likelihoodRatioTest <- function(nSim, p, d, N, largeModel, nullModel, epsilon, GLarge = NULL, GNull = NULL, maxIter = 100L, nCores = 1L) {
   if (!is.numeric(nSim) || ((nSim %% 1) != 0) || (nSim < 1)) {
