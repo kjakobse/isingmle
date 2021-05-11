@@ -103,6 +103,9 @@ List calculateNewPAndEHatBoundary(NumericMatrix ePlus, int d, NumericMatrix e, N
           capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
           break;
         }
+        if(index == (indexLength - 1)) {
+          return List::create(_["p"] = NA_REAL);
+        }
       }
       // If delta+J_ij>0, leave the q's unchanged, otherwise shift them so J_ij = 0:
       if (delta + capitalJ > 0) {

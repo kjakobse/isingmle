@@ -50,6 +50,13 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
   # initiate the distribution given by mu and Xi:
   p <- createP(mu, d)
 
+  # check if the initial distribution contains zeroes:
+  if(!(all(p > 1e-15))) {
+    pcontainszeroes <- 1
+  } else{
+    pcontainszeroes <- 0
+  }
+
   # initiate a matrix for the edges of the fitted graph G_hat:
   eHat <- matrix(NA, nrow(E), 2)
   eHatOmitNA <- na.omit(eHat)
@@ -61,29 +68,26 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
   # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
   empiricalList <- calculateEmpirical(E, M, xBar)
   empirical <- empiricalList$empirical
-  containsZeroes <- empiricalList$containsZeroes
+  econtainsZeroes <- empiricalList$containsZeroes
   if (ncol(empirical) == 0) {
     stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
   }
 
   # If the empirical distribution contains zeroes a version of the algorithm converging on the boundary is used:
-  if (containsZeroes) {
+  if (econtainsZeroes | nrow(empirical) == 0 | pcontainszeroes) {
     iter <- 0L
     # While loop updating the distribution until the convergence criteria is meet or the max number of iterations is reached:
     while ((iter < maxIter) & (max(abs(mu-xBar)) > epsilon | max(condition) > epsilon)){
       # Update the distribution for each variable pair in E, and update the edges in the fitted graph:
-      pAndEHatResult <- calculateNewPAndEHatnoMTP2Boundary(E, d, empirical, p, eHat)
+      pAndEHatResult <- calculateNewPAndEHatnoMTP2Boundary(E, d, empirical, p)
       p <- pAndEHatResult$p
-      eHat <- pAndEHatResult$eHat
 
       # Calculate the updated values of the mean value parameters:
       mu <- calculateNewMu(p, d)
       Xi <- calculateNewXi(p, d)
 
-      eHatOmitNA <- na.omit(eHat)
-
       # Calculate the updated condition in the convergence criteria:
-      condition <- calculateCondition(eHatOmitNA, M, Xi);
+      condition <- calculateCondition(E, M, Xi);
 
       iter <- iter + 1L
     }
@@ -93,15 +97,8 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
     }
     warning ("Maximum likelihood estimate is on the boundary")
 
-    # Recode the vertices in G to the names specified in the input:
-    for (i in V) {
-      eHatOmitNA[eHatOmitNA == V[i]] <- G[[1]][i]
-    }
-    attr(eHatOmitNA, "na.action") <- NULL
-    attr(eHatOmitNA, "class") <- NULL
-
     # Return the fitted distribution, graph, mean value parameters and number of iterations until convergence:
-    return (list(p_hat = p, G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA), mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter))
+    return (list(p_hat = p, mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter))
   } else {
     iter <- 0L
     # Initiate a matrix for the canonical parameter J:
