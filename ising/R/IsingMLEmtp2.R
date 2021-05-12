@@ -17,9 +17,11 @@
 #' @param data An optional matrix or data frame containing samples from d binary variables with outcomes coded as -1 and 1.
 #' @param epsilon A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.
 #' @param maxIter An integer specifying the maximum number of iterations to run the algorithm.
+#' @param zeroReplace A boolean value indicating whether or not to replace zeroes in the empirical distribution.
+#' @param eps A numeric value >0 specifying which value to replace zeroes with.
 #' @return \code{IsingMLEmtp2} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
 #' @export
-IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L){
+IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, zeroReplace = FALSE, eps = 1e-10){
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) {stop("G must be a list of length two.")}
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) { stop("G must contain a vector with vertices and a matrix with two columns having edges in the rows.")}
@@ -68,12 +70,16 @@ IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, 
   condition <- c(Inf)
   condition2 <- calculateCondition2(E, M, Xi)
 
-  # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
-  empiricalList <- calculateEmpirical(ePlus, M, xBar)
-  empirical <- empiricalList$empirical
-  econtainsZeroes <- empiricalList$containsZeroes
-  if (ncol(empirical) == 0) {
-    stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
+  if(zeroReplace) {
+    empirical <- calculateEmpiricalReplaceZeroes(ePlus, M, xBar, eps)
+    econtainsZeroes <- 0
+  } else{ # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
+    empiricalList <- calculateEmpirical(ePlus, M, xBar)
+    empirical <- empiricalList$empirical
+    econtainsZeroes <- empiricalList$containsZeroes
+    if (ncol(empirical) == 0) {
+      stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
+    }
   }
 
   # If the empirical distribution or the initial distribution contains zeroes a version of the algorithm converging on the boundary is used:
