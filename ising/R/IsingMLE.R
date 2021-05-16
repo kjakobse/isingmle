@@ -68,10 +68,10 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
   condition <- c(Inf)
 
   if(zeroReplace) {
-    empirical <- calculateEmpiricalReplaceZeroes(ePlus, M, xBar, eps)
+    empirical <- calculateEmpiricalReplaceZeroes(E, M, xBar, eps)
     econtainsZeroes <- 0
   } else{ # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
-    empiricalList <- calculateEmpirical(ePlus, M, xBar)
+    empiricalList <- calculateEmpirical(E, M, xBar)
     empirical <- empiricalList$empirical
     econtainsZeroes <- empiricalList$containsZeroes
     if (ncol(empirical) == 0) {
