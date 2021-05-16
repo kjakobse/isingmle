@@ -9,6 +9,7 @@
 #' being a matrix containing the edges in the rows. Make sure the naming of the vertices and the edges match.\cr
 #' If the maximum likelihood estimator is on the boundary of the parameter space only the mean value parameters will be returned.
 #' Otherwise the canonical parameters h and J will also be returned.\cr
+#' Note that currently the behaviour of the algorithm on the boundary is not as desired and using zeroReplace = TRUE is recommended.\cr
 #' The index of the probability vector returned by the function corresponds to the binary value of the matching observation with -1 encoded as 0.
 #'
 #' @param G A list containing a vector with vertices and a matrix containing edges in the rows.
@@ -21,7 +22,7 @@
 #' @param eps A numeric value >0 specifying which value to replace zeroes with.
 #' @return \code{IsingMLEmtp2} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
 #' @export
-IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, zeroReplace = FALSE, eps = 1e-10){
+IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, zeroReplace = TRUE, eps = 1e-10){
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) {stop("G must be a list of length two.")}
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) { stop("G must contain a vector with vertices and a matrix with two columns having edges in the rows.")}
