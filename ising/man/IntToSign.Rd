@@ -7,7 +7,7 @@
 IntToSign(x, digits)
 }
 \arguments{
-\item{x}{Integer.}
+\item{x}{Integer to be converted.}
 
 \item{digits}{Integer specifying how many digits should be returned.}
 }

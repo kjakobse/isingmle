@@ -37,5 +37,5 @@ IsingSampler(
 }
 \details{
 The matrix J should be symmetric and have zeroes in the diagonal. \cr
-The probability at index i in p is assumed to correspond with the probability of the observation where replacing -1 with 0 gives the binary representation of the index.
+A probability in the probability vector p is assumed to belong to the observation whose binary value matches the value of the index (using zero-indexing).
 }

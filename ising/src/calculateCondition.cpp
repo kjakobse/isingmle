@@ -1,14 +1,14 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Calculate the distances between m and xi
+//' Calculate the distances between M and Xi
 //'
-//' \code{calculateCondition} calculates the absolute differences between entries in the matrices m and xi given by eHatOmitNA. This function is intended to be used by IsingMLE and IsingMLEmtp2.
+//' \code{calculateCondition} calculates the absolute differences between entries in the matrices M and Xi given by eHatOmitNA. This function is intended to be used by IsingMLE and IsingMLEmtp2.
 //'
 //' @param eHatOmitNA NumericMatrix containing in the rows the indices for the entries in m and xi.
 //' @param m NumericMatrix containing a sample second moment.
 //' @param xi NumericMatrix to be compared with m.
-//' @return \code{calculateCondition} returns a NumericVector with the distance between entries in m and xi for those entries specified by eHatOmitNA.
+//' @return \code{calculateCondition} returns a vector with the distance between entries in m and xi for those entries specified by eHatOmitNA.
 //' @export
 //'
 // [[Rcpp::export]]

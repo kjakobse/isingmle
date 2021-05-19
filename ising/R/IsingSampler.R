@@ -1,10 +1,12 @@
 library(Rcpp)
 
+# IntToSign function:
+
 #' Convert integer to binary with 0 represented with -1 and 1 represented with 1
 #'
 #' \code{IntToSign} converts an integer to a binary number where 0 is represented with -1 and 1 is represented with 1.
 #'
-#' @param x Integer.
+#' @param x Integer to be converted.
 #' @param digits Integer specifying how many digits should be returned.
 #' @return \code{IntToSign} returns a vector with length equal to digits, containing the sign representation of the input integer.
 #' @export
@@ -24,12 +26,14 @@ IntToSign <- function(x, digits) {
   Sign
 }
 
+# IsingSampler function:
+
 #' Generate data sets from the Ising model
 #'
 #' \code{IsingSampler} generates a data set of a specified length from an Ising model.
 #'
 #' The matrix J should be symmetric and have zeroes in the diagonal. \cr
-#' The probability at index i in p is assumed to correspond with the probability of the observation where replacing -1 with 0 gives the binary representation of the index.
+#' A probability in the probability vector p is assumed to belong to the observation whose binary value matches the value of the index (using zero-indexing).
 #'
 #' @param h Vector, specifying the canonical parameter h from the Ising model. Optional if p is specified.
 #' @param J Matrix, specifying the canonical parameter J from the Ising model. Optional if p is specified.
@@ -56,7 +60,7 @@ IsingSampler <- function(h = NULL, J = NULL, p = NULL, N = 1000L, obs = TRUE, in
     d <- log2(length(p))
   }
 
-  # Sample indices whose binary representation with 0 replaced with -1 corresponds to the observations in the data set:
+  # Sample indices whose binary representation corresponds to the observations in the data set:
   IntSample <- sample(x = 0:(2^d-1), size = N, replace = TRUE, prob = p)
 
   # Return the sampled data in the format specified by the input. Either just the integers, just the corresponding binary observations, or both:

@@ -74,7 +74,7 @@ List calculateNewPAndEHatBoundary(NumericMatrix ePlus, int d, NumericMatrix e, N
     } else {
       q00 = e(t, 3) / p00;
     }
-// If one of the q's is zero they remain unchanged, otherwise J_ij can be calculated:
+// If one of the q's is zero they remain unchanged, otherwise we attempt to calculate J_ij:
     if (abs(q11) < 1e-15 || abs(q10) < 1e-15 || abs(q01) < 1e-15 || abs(q00) < 1e-15) {
       eHat(t, 0) = i;
       eHat(t, 1) = j;
@@ -103,6 +103,7 @@ List calculateNewPAndEHatBoundary(NumericMatrix ePlus, int d, NumericMatrix e, N
           capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
           break;
         }
+        // If no indices allow us to calculate J_ij return an error:
         if(index == (indexLength - 1)) {
           return List::create(_["p"] = NA_REAL);
         }

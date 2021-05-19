@@ -9,7 +9,7 @@ using namespace Rcpp;
 //'
 //' @param intData NumericVector containing the data encoded as integers.
 //' @param d Integer specifying the number of binary variables.
-//' @return \code{binaryLogLikelihood} returns a double containing the log-likelihood.
+//' @return \code{binaryLogLikelihood} returns a numeic value with the log-likelihood.
 //' @export
 //'
 // [[Rcpp::export]]

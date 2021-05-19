@@ -1,14 +1,14 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Calculate the differences between m and xi
+//' Calculate the differences between M and Xi
 //'
-//' \code{calculateCondition2} calculates the differences between entries in the matrices m and xi given by e. This function is intended to be used by IsingMLE and IsingMLEmtp2.
+//' \code{calculateCondition2} calculates the differences between entries in the matrices M and Xi given by E. This function is intended to be used by IsingMLE and IsingMLEmtp2.
 //'
 //' @param e NumericMatrix containing in the rows the indices for the entries in m and xi.
 //' @param m NumericMatrix containing a sample second moment.
 //' @param xi NumericMatrix to be compared with m.
-//' @return \code{calculateCondition2} returns a NumericVector with the difference between entries in m and xi for those entries specified by e.
+//' @return \code{calculateCondition2} returns a vector with the difference between entries in m and xi for those entries specified by e.
 //' @export
 //'
 // [[Rcpp::export]]

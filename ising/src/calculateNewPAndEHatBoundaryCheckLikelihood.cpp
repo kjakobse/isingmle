@@ -25,8 +25,6 @@ List calculateNewPAndEHatBoundaryCheckLikelihood(NumericMatrix ePlus, int d, Num
   for (int t = 0; t < ePlusDim; t++) {
     int i = ePlus(t, 0);
     int j = ePlus(t, 1);
-    //std::cout << "i = " << i << std::endl;
-    //std::cout << "j = " << j << std::endl;
 // masks for the variables i and j. << is the bitwise and operator and shifts the bits to the left:
     int iCInternal = d - i;
     int jCInternal = d - j;
@@ -80,9 +78,8 @@ List calculateNewPAndEHatBoundaryCheckLikelihood(NumericMatrix ePlus, int d, Num
     } else {
       q00 = e(t, 3) / p00;
     }
-// If one of the q's is zero they remain unchanged, otherwise J_ij can be calculated:
+// If one of the q's is zero they remain unchanged, otherwise we attempt to calculate J_ij:
     if (abs(q11) < 1e-15 || abs(q10) < 1e-15 || abs(q01) < 1e-15 || abs(q00) < 1e-15) {
-      //std::cout << "q = " << 0 << std::endl;
       eHat(t, 0) = i;
       eHat(t, 1) = j;
     } else {
@@ -110,18 +107,17 @@ List calculateNewPAndEHatBoundaryCheckLikelihood(NumericMatrix ePlus, int d, Num
           capitalJ = 0.25 * log(p[v1 + index] * p[v4 + index] / (p[v2 + index] * p[v3 + index]));
           break;
         }
+        // If no indices allow us to calculate J_ij return an error:
         if(index == (indexLength - 1)) {
           return List::create(_["p"] = NA_REAL);
         }
       }
       // If delta+J_ij>0, leave the q's unchanged, otherwise shift them so J_ij = 0:
       if (delta + capitalJ > 0) {
-        //std::cout << "deltaplusJpos = " << delta + capitalJ << std::endl;
         // when the updated J_ij is positive the edge ij is in the independence graph:
         eHat(t, 0) = i;
         eHat(t, 1) = j;
       } else {
-        //std::cout << "deltaplusJneg = " << delta + capitalJ << std::endl;
         double capitalC = exp(-4 * capitalJ) * (p11 * p00) / (p10 * p01);
         double a = 1 - capitalC;
         double b = e(t, 0) + e(t, 3) + capitalC * (e(t, 1) + e(t, 2));
@@ -159,7 +155,6 @@ List calculateNewPAndEHatBoundaryCheckLikelihood(NumericMatrix ePlus, int d, Num
       }
     }
 
-    //std::cout << "logLikelihood = " << logLikelihood << std::endl;
     double newlogLikelihood = 0;
     // For each sample look up the corresponding probability in p and add the log to the loglikelihood:
     for(unsigned long long int t = 0; t < nrow; t++) {
@@ -171,7 +166,6 @@ List calculateNewPAndEHatBoundaryCheckLikelihood(NumericMatrix ePlus, int d, Num
       }
       newlogLikelihood += log(p[pEntry]);
     }
-    //std::cout << "newlogLikelihood = " << newlogLikelihood<< std::endl;
 
     if(newlogLikelihood < logLikelihood - 1e-5) {
       likelihoodCounter++;

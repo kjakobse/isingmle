@@ -1,6 +1,6 @@
 # Function fitting without MTP2 condition:
 
-#' Calculate the maximum likelihood estimator in the Ising model.
+#' Calculate the maximum likelihood estimator in the Ising model without MTP2 constraints.
 #'
 #' \code{IsingMLE} fits graphical Ising models using an IPS-type algorithm.
 #'
@@ -9,19 +9,19 @@
 #' being a matrix containing the edges in the rows. Make sure the naming of the vertices and the edges match.\cr
 #' If the maximum likelihood estimator is on the boundary of the parameter space only the mean value parameters will be returned.
 #' Otherwise the canonical parameters h and J will also be returned.\cr
-#' The index of the probability vector returned by the function corresponds to the binary value of the matching observation with -1 encoded as 0.
+#' A probability in the probability vector returned by the function belongs to the observation whose binary value matches the value of the index (using zero-indexing).
 #'
 #' @param G A list containing a vector with vertices and a matrix containing edges in the rows.
 #' @param xBar An optional vector containing the sample first moment of the data. Must be specified if data is unspecified.
 #' @param M An optional matrix containing the sample second moment of the data. Must be specified if data is unspecified.
 #' @param data An optional matrix or data frame containing samples from d binary variables with outcomes coded as -1 and 1.
-#' @param epsilon A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.
+#' @param epsilon A numeric value >0 specifying the tolerance for when the algorithm is considered to have converged.
 #' @param maxIter An integer specifying the maximum number of iterations to run the algorithm.
 #' @param zeroReplace A boolean value indicating whether or not to replace zeroes in the empirical distribution.
-#' @param eps A numeric value >0 specifying which value to replace zeroes with.
+#' @param ReplaceValue A numeric value >0 specifying which value to replace zeroes with.
 #' @return \code{IsingMLE} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
 #' @export
-IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, zeroReplace = FALSE, eps = 1e-10){
+IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, zeroReplace = FALSE, ReplaceValue = 1e-10){
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) {stop("G must be a list of length two.")}
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) { stop("G must contain a vector with vertices and a matrix with two columns having edges in the rows.")}
@@ -64,12 +64,15 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
   eHatOmitNA <- na.omit(eHat)
 
   # Initiate the condition on Xi. Inf ensures that the statement max(condition > epsilon) is always true initially:
-  # condition checks if the difference between Xi and M for entries in E_hat are zero.
+  # condition checks if the difference between Xi and M for entries in E are zero.
   condition <- c(Inf)
 
-  if(zeroReplace) {
-    empirical <- calculateEmpiricalReplaceZeroes(E, M, xBar, eps)
+  if(zeroReplace) { # Calculate the empirical distribution for each variable pair in E and replace zeroes with ReplaceValue
+    empirical <- calculateEmpiricalReplaceZeroes(E, M, xBar, ReplaceValue)
     econtainsZeroes <- 0
+    if (ncol(empirical) == 0) {
+      stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
+    }
   } else{ # Calculate the empirical distribution for each variable pair in E and check if any contain zeroes:
     empiricalList <- calculateEmpirical(E, M, xBar)
     empirical <- empiricalList$empirical
@@ -124,7 +127,7 @@ IsingMLE <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxI
       eHatOmitNA <- na.omit(eHat)
 
       # Calculate the updated condition in the convergence criteria:
-      condition <- calculateCondition(eHatOmitNA, M, Xi);
+      condition <- calculateCondition(E, M, Xi);
 
       iter <- iter + 1L
     }

@@ -21,7 +21,6 @@ NumericMatrix calculateM(NumericMatrix data, unsigned long long int length, int 
     for (int u = 0; u < d; u++) {
       double entryValue = 0;
       for (unsigned long long int v = 0; v < length; v++) {
-        //entryValue += data(v, t) * data(v, u);
         if (data(v, t) == data(v, u)) {
           entryValue++;
         } else {
