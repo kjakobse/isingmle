@@ -1,16 +1,15 @@
 # isingmle
 R package for computing the MLE in MTP_2 Ising models
 ## Installation
-### Install from binary package
-
+### Install from binary package (Windows only)
+Run the following command from the R console:
+```
+install.packages("https://github.com/kjakobse/isingmle/raw/main/ising_0.2.0.zip", repos = NULL)
+```
 
 ### Install from source package
-
-### Install directly from github
-Run the following commands from the R console:
+Run the following command from the R console:
 ```
-install.packages("remotes")
-
-remotes::install_github("kjakobse/isingmle", subdir = "ising")
+install.packages("https://github.com/kjakobse/isingmle/raw/main/ising_0.2.0.tar.gz", repos = NULL)
 ```
-Note: 
+Note: Requires C++ compiler (Rtools40 on windows).
