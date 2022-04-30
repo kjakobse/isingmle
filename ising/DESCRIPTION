@@ -1,7 +1,7 @@
 Package: ising
 Type: Package
 Title: Fit MTP2 Ising models
-Version: 0.2.0
+Version: 0.2.1
 Author: Kim Daniel Jakobsen
 Maintainer: Kim Daniel Jakobsen <kimmsn@jc-aps.dk>
 Description: Compute the maximum likelihood estimator in Ising models with or without MTP2 restrictions and/or Markov restrictions.

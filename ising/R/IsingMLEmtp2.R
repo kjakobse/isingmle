@@ -76,14 +76,14 @@ IsingMLEmtp2 <- function(G, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, 
     empirical <- calculateEmpiricalReplaceZeroes(ePlus, M, xBar, ReplaceValue)
     econtainsZeroes <- 0
     if (ncol(empirical) == 0) {
-      stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
+      stop (cat("input doesn't fulfill conditions for existence of MLE.\n Produced negative values of the empirical distribution"))
     }
   } else{ # Calculate the empirical distribution for each variable pair in ePlus and check if any contain zeroes:
     empiricalList <- calculateEmpirical(ePlus, M, xBar)
     empirical <- empiricalList$empirical
     econtainsZeroes <- empiricalList$containsZeroes
     if (ncol(empirical) == 0) {
-      stop (cat("input doesn't fulfill conditions for existance of MLE.\n Produced negative values of the empirical distribution"))
+      stop (cat("input doesn't fulfill conditions for existence of MLE.\n Produced negative values of the empirical distribution"))
     }
   }
 
