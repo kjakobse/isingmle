@@ -9,10 +9,10 @@ The ising package provides functions for maximum likelihood estimation, sampling
 }
 \section{ising functions}{
 
-\strong{isingMLE}: Find the maximum likelihood estimate in in a graphical Ising model.\cr
+\strong{isingMLE}: Find the maximum likelihood estimate in a graphical Ising model.\cr
 \strong{IsingMLEmtp2}: Find the maximum likelihood estimate in a graphical Ising model with MTP_2 constraints. \cr
 \strong{IsingSampler}: Sample from a graphical Ising model. \cr
-\strong{IsingLikelihood}: Compute the likelihood of a dataset from a graphical Ising model. \cr
+\strong{IsingLikelihood}: Compute the likelihood of a data set from a graphical Ising model. \cr
 \strong{BootstrapLikelihoodRatio}: Simulate from the null-distribution to estimate the distribution of the likelihood ratio test statistic. \cr
 }
 

@@ -18,5 +18,5 @@ createP(mu, d)
 \code{createP} is intended to be used with \code{isingMLE} and \code{isingMLEmtp2}. It creates the vector p with the initial distribution that the algorithms start from.
 }
 \details{
-
+The initial distribution has the form \eqn{p(x) = 2^{-|V|}\prod_{v \in V}(1 + x_v \mu_v)}.
 }

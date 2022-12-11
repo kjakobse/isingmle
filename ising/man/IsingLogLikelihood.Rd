@@ -16,12 +16,16 @@ IsingLogLikelihood(data, h = NULL, J = NULL, p = NULL)
 \item{p}{Vector containing the distribution of the Ising model.}
 }
 \value{
-\code{IsingLogLikelihood} returns a numeric value with the log-likelihood of the data set for the specified Ising model.
+\code{IsingLogLikelihood} returns a numeric value with the
+log-likelihood of the data set for the specified Ising model.
 }
 \description{
-\code{IsingLogLikelihood} calculates the log-likelihood of a data set for a specified Ising model.
+\code{IsingLogLikelihood} calculates the log-likelihood of a data set for a
+specified Ising model.
 }
 \details{
-The function must be provided with either the natural parameters h and J or the distribution p. \cr
-A probability in the probability p belongs to the observation whose binary value matches the value of the index (using zero-indexing).
+The function must be provided with either the natural parameters h and J or
+the distribution p. \cr
+A probability in the probability p belongs to the observation whose binary
+value matches the value of the index (using zero-indexing).
 }
