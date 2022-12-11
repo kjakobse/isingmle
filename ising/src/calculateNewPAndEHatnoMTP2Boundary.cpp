@@ -9,12 +9,14 @@ using namespace Rcpp;
 //' @param d Integer containing the number of binary variables.
 //' @param e Matrix containing the empirical distributions for the edges in ePlus.
 //' @param p Numeric vector containing the distribution to be updated.
-//' @param eHat Matrix containing the edges in the independence graph of the distribution p.
 //' @return \code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing the updated distribution.
 //' @export
 //'
 // [[Rcpp::export]]
-List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus, int d, NumericMatrix e, NumericVector p) {
+List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus,
+                                        int d,
+                                        NumericMatrix e,
+                                        NumericVector p) {
   int ePlusDim = ePlus.nrow();
   unsigned long long int pLength = p.size();
   // for loop over the edges in ePlus:

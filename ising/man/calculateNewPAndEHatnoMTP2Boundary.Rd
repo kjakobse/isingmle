@@ -14,8 +14,6 @@ calculateNewPAndEHatnoMTP2Boundary(ePlus, d, e, p)
 \item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
-
-\item{eHat}{Matrix containing the edges in the independence graph of the distribution p.}
 }
 \value{
 \code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing the updated distribution.

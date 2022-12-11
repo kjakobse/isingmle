@@ -28,6 +28,7 @@ library(rlang)
 #' @param ReplaceValue A numeric value >0 specifying which value to replace zeroes with.
 #' @return \code{IsingMLEmtp2Partial} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
 #' @export
+#' @importFrom rlang duplicate
 IsingMLEmtp2Partial <- function(G, pstart, Jstart, xBar = NULL, M = NULL, data = NULL, epsilon = 1e-4, maxIter = 100L, ptol = 1e-15, zeroReplace = TRUE, ReplaceValue = 1e-10){
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) {stop("G must be a list of length two.")}
