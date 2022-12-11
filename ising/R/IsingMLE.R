@@ -47,12 +47,20 @@ IsingMLE <- function(G,
                      zeroReplace = FALSE,
                      ReplaceValue = 1e-10){
   # Encode the vertices in G as the integers from 1 to d:
+<<<<<<< HEAD
   if (!is.list(G) || length(G) != 2) {
     stop("G must be a list of length two.")
     }
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) {
     stop("G must contain a vector with vertices and a matrix ",
          "with two columns having edges in the rows.")
+=======
+  if (!is.list(G) || length(G) !=2) {
+    stop("G must be a list of length two.")
+    }
+  if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) {
+    stop("G must contain a vector with vertices and a matrix with two columns having edges in the rows.")
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
     }
   V <- seq_along(G[[1]])
   E <- matrix(data = 0,
@@ -62,9 +70,20 @@ IsingMLE <- function(G,
     E[G[[2]] == G[[1]][i]] <- i
   }
 
+<<<<<<< HEAD
   # Initiate the mean value parameter mu with the empirical value.
   # If not given directly the empirical moments are calculated from the provided data set:
   if (!is.null(data)) {
+=======
+  # Initiate the mean value parameter mu with the empirical value. If not given
+  # directly the empirical moments are calculated from the provided data set:
+  if (is.null(data)) {
+    if (is.null(xBar) | is.null(M)) {
+      stop("Must input either a data set or sufficient statistics")
+    }
+    mu <- xBar
+  } else {
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
     M <- calculateM(as.matrix(data), dim(data)[1], dim(data)[2])
     xBar <- calculatexBar(as.matrix(data), dim(data)[1], dim(data)[2])
     mu <- xBar
@@ -102,6 +121,7 @@ IsingMLE <- function(G,
   condition <- c(Inf)
 
   if (zeroReplace) {
+<<<<<<< HEAD
     # Calculate the empirical distribution for each variable pair in E and
     # replace zeroes with ReplaceValue
     empirical <- calculateEmpiricalReplaceZeroes(E,
@@ -125,6 +145,24 @@ IsingMLE <- function(G,
     if (ncol(empirical) == 0) {
       stop (cat("input doesn't fulfill conditions for existance of MLE.",
                 "\n",
+=======
+    # Calculate the empirical distribution for each variable pair in E
+    # and replace zeroes with ReplaceValue
+    empirical <- calculateEmpiricalReplaceZeroes(E, M, xBar, ReplaceValue)
+    econtainsZeroes <- 0
+    if (ncol(empirical) == 0) {
+      stop(cat("input doesn't fulfill conditions for existance of MLE.\n",
+                "Produced negative values of the empirical distribution"))
+    }
+  } else{
+    # Calculate the empirical distribution for each variable pair in E
+    # and check if any contain zeroes:
+    empiricalList <- calculateEmpirical(E, M, xBar)
+    empirical <- empiricalList$empirical
+    econtainsZeroes <- empiricalList$containsZeroes
+    if (ncol(empirical) == 0) {
+      stop(cat("input doesn't fulfill conditions for existance of MLE.\n",
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
                 "Produced negative values of the empirical distribution"))
     }
   }
@@ -135,6 +173,7 @@ IsingMLE <- function(G,
     iter <- 0L
     # While loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
+<<<<<<< HEAD
     while ((iter < maxIter) &
            (max(abs(mu-xBar)) > epsilon |
             max(condition) > epsilon)) {
@@ -144,6 +183,13 @@ IsingMLE <- function(G,
                                                            d,
                                                            empirical,
                                                            p)
+=======
+    while ((iter < maxIter) &&
+           (max(abs(mu-xBar)) > epsilon || max(condition) > epsilon)) {
+      # Update the distribution for each variable pair in E,
+      # and update the edges in the fitted graph:
+      pAndEHatResult <- calculateNewPAndEHatnoMTP2Boundary(E, d, empirical, p)
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
       p <- pAndEHatResult$p
 
       # Calculate the updated values of the mean value parameters:
@@ -157,20 +203,29 @@ IsingMLE <- function(G,
     }
 
     if (iter >= maxIter) {
-      warning ("MLE did not converge; maximum number of iterations reached")
+      warning("MLE did not converge; maximum number of iterations reached")
     }
-    warning ("Maximum likelihood estimate is on the boundary")
+    warning("Maximum likelihood estimate is on the boundary")
 
+<<<<<<< HEAD
     # Return the fitted distribution, graph, mean value parameters and number
     # of iterations until convergence:
     return(list(p_hat = p,
                 mu_hat = mu,
                 Xi_hat = Xi,
                 number_of_iterations = iter))
+=======
+    # Return the fitted distribution, graph, mean value parameters
+    # and number of iterations until convergence:
+    return(
+      list(p_hat = p, mu_hat = mu, Xi_hat = Xi, number_of_iterations = iter)
+    )
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
   } else {
     iter <- 0L
     # Initiate a matrix for the canonical parameter J:
     capitalJ <- matrix(0, d, d)
+<<<<<<< HEAD
     # While loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
     while ((iter < maxIter) &
@@ -185,6 +240,16 @@ IsingMLE <- function(G,
                                                    p,
                                                    eHat,
                                                    capitalJ)
+=======
+    # While loop updating the distribution until the convergence criteria
+    # is meet or the max number of iterations is reached:
+    while ((iter < maxIter) &&
+           (max(abs(mu-xBar)) > epsilon || max(condition) > epsilon)) {
+      # Update the distribution for each variable pair in E,
+      # update the edges in the fitted graph, and calculate the value of the
+      # canonical parameter J for the updated Ising model:
+      pAndEHatResult <- calculateNewPAndEHatnoMTP2(E, d, empirical, p, eHat, capitalJ)
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
       p <- pAndEHatResult$p
       eHat <- pAndEHatResult$eHat
       capitalJ <- pAndEHatResult$J
@@ -217,6 +282,7 @@ IsingMLE <- function(G,
 
     # return the fitted distribution, graph, mean value parameters,
     # the canonical parameters, and number of iterations until convergence:
+<<<<<<< HEAD
     return(list(p_hat = p,
                 G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA),
                 mu_hat = mu,
@@ -224,5 +290,18 @@ IsingMLE <- function(G,
                 h_hat = h,
                 J_hat = capitalJ,
                 number_of_iterations = iter))
+=======
+    return (
+      list(
+        p_hat = p,
+        G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA),
+        mu_hat = mu,
+        Xi_hat = Xi,
+        h_hat = h,
+        J_hat = capitalJ,
+        number_of_iterations = iter
+        )
+      )
+>>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
   }
 }
