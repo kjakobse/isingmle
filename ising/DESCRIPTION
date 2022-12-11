@@ -3,6 +3,9 @@ Type: Package
 Title: Fit MTP2 Ising models
 Version: 0.2.0
 Author: Kim Daniel Jakobsen
+Authors@R: 
+    person("Kim Daniel", "Jakobsen", , "kim.jakobsen@jc-aps.dk", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
 Maintainer: Kim Daniel Jakobsen <kimmsn@jc-aps.dk>
 Description: Compute the maximum likelihood estimator in Ising models with or without MTP2 restrictions and/or Markov restrictions.
     Can handle estimates on the boundary of the parameter space. 
@@ -10,6 +13,7 @@ Description: Compute the maximum likelihood estimator in Ising models with or wi
 License: EUPL
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
 LinkingTo: Rcpp
 Imports: Rcpp, parallel, rlang

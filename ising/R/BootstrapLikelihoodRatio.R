@@ -20,6 +20,9 @@
 #' @param ReplaceValue A numeric value >0 specifying which value to replace zeroes with.
 #' @return \code{bootstrapLikelihoodRatio} returns a numeric value with the likelihood ratio test statistic for the data set simulated under the null model.
 #' @export
+#' @exportPattern "^[[:alpha:]]+"
+#' @importFrom stats na.omit
+#' @import parallel
 bootstrapLikelihoodRatio <- function(simNum, p, d, N, largeModel, nullModel, epsilon, GLarge = NULL, GNull = NULL, maxIter = 100L, zeroReplace = FALSE, ReplaceValue = 1e-10) {
   # Generate a sample from the given null model with N observations:
   Listsample <- IsingSampler(p = p, N = N, obs = TRUE, int = TRUE, matrix = TRUE)
