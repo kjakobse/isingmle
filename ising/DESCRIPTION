@@ -13,11 +13,7 @@ Description: Compute the maximum likelihood estimator in Ising models with or wi
 License: EUPL
 Encoding: UTF-8
 LazyData: true
-<<<<<<< HEAD
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-=======
-RoxygenNote: 7.1.2
->>>>>>> 487126dc4243cb9f395ab186fef64945fe4d22e0
 LinkingTo: Rcpp
 Imports: Rcpp, parallel, rlang
