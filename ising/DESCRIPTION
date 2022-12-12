@@ -1,7 +1,7 @@
 Package: ising
 Type: Package
 Title: Fit MTP2 Ising models
-Version: 0.2.1
+Version: 0.2.2
 Author: Kim Daniel Jakobsen
 Authors@R: 
     person("Kim Daniel", "Jakobsen", , "kim.jakobsen@jc-aps.dk", role = c("aut", "cre"),
