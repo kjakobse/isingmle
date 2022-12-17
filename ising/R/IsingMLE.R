@@ -64,7 +64,7 @@ IsingMLE <- function(G,
 
   # Initiate the mean value parameter mu with the empirical value. If not given
   # directly the empirical moments are calculated from the provided data set:
-  if (!is.null(data)) {
+  if (!is.null(data) && (is.null(xBar) | is.null(M))) {
     M <- calculateM(as.matrix(data), dim(data)[1], dim(data)[2])
     xBar <- calculatexBar(as.matrix(data), dim(data)[1], dim(data)[2])
     mu <- xBar

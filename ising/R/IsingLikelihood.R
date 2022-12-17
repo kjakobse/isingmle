@@ -21,12 +21,14 @@ IsingLogLikelihood <- function(data,
                                h = NULL,
                                J = NULL,
                                p = NULL) {
-  # the functions call lower level c++ functions based on whether h and J or p is specified.
+  # the functions call lower level c++ functions based on whether h and J or p
+  # is specified.
   if(is.null(h) & is.null(J) & !is.null(p)) {
     return(isingLogLikelihoodProbs(data, p))
   }
   if(!is.null(h) & !is.null(J) & is.null(p)) {
     return(IsingLogLikelihood <- isingLogLikelihoodhJ(data, h, J))
   }
-  stop("Must specify either the natural parameters h and J or the probability vector p")
+  stop(paste("Must specify either the natural parameters",
+              "h and J or the probability vector p"))
 }
