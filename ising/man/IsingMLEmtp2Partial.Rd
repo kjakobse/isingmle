@@ -2,7 +2,8 @@
 % Please edit documentation in R/IsingMLEmtp2Partial.R
 \name{IsingMLEmtp2Partial}
 \alias{IsingMLEmtp2Partial}
-\title{Calculate the profile maximum likelihood estimator in the Ising model under MTP_2 constraint.}
+\title{Calculate the profile maximum likelihood estimator in the Ising model under
+MTP_2 constraint.}
 \usage{
 IsingMLEmtp2Partial(
   G,
@@ -19,41 +20,59 @@ IsingMLEmtp2Partial(
 )
 }
 \arguments{
-\item{G}{A list containing a vector with vertices and a matrix containing edges in the rows.}
+\item{G}{A list containing a vector with vertices and a matrix containing
+edges in the rows.}
 
-\item{pstart}{A vector with the initial distribution that the algorithm should start from.}
+\item{pstart}{A vector with the initial distribution that the algorithm
+should start from.}
 
 \item{Jstart}{A matrix with the paramter J for the initial distribution.}
 
-\item{xBar}{An optional vector containing the sample first moment of the data. Must be specified if data is unspecified.}
+\item{xBar}{An optional vector containing the sample first moment of the
+data. Must be specified if data is unspecified.}
 
-\item{M}{An optional matrix containing the sample second moment of the data. Must be specified if data is unspecified.}
+\item{M}{An optional matrix containing the sample second moment of the data.
+Must be specified if data is unspecified.}
 
-\item{data}{An optional matrix or data frame containing samples from d binary variables with outcomes coded as -1 and 1.}
+\item{data}{An optional matrix or data frame containing samples from d
+binary variables with outcomes coded as -1 and 1.}
 
-\item{epsilon}{A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.}
+\item{epsilon}{A numeric value > 0 specifying the tolerance for when the
+algorithm is considered to have converged.}
 
-\item{maxIter}{An integer specifying the maximum number of iterations to run the algorithm.}
+\item{maxIter}{An integer specifying the maximum number of iterations to run
+the algorithm.}
 
-\item{ptol}{Numeric value specifying the tolerence for which values in pstart are considered to be zero.}
+\item{ptol}{Numeric value specifying the tolerence for which values in pstart
+are considered to be zero.}
 
-\item{zeroReplace}{A boolean value indicating whether or not to replace zeroes in the empirical distribution.}
+\item{zeroReplace}{A boolean value indicating whether or not to replace
+zeroes in the empirical distribution.}
 
-\item{ReplaceValue}{A numeric value >0 specifying which value to replace zeroes with.}
+\item{ReplaceValue}{A numeric value >0 specifying which value to replace
+zeroes with.}
 }
 \value{
-\code{IsingMLEmtp2Partial} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
+\code{IsingMLEmtp2Partial} returns a list with the estimated
+distribution, estimated graph, estimated parameters, and number of iterations
+until the algorithm converged.
 }
 \description{
-\code{IsingMLEmtp2Partial} fits graphical Ising models under MTP_2 constraints using an IPS-type algorithm and allows fixing the value of J_ij.
+\code{IsingMLEmtp2Partial} fits graphical Ising models under MTP_2
+constraints using an IPS-type algorithm and allows fixing the value of J_ij.
 }
 \details{
-The graph G specifies which undirected graph the maximum likelihood estimator should be Markov with respect to.
-The graph should be specified as a list with the first element being a vector containing the vertices of the graph and the second element
-being a matrix containing the edges in the rows. Make sure the naming of the vertices and the edges match.\cr
-If the maximum likelihood estimator is on the boundary of the parameter space only the mean value parameters will be returned.
-Otherwise the canonical parameters h and J will also be returned.\cr
-Note that currently the behaviour of the algorithm on the boundary is not as desired and using zeroReplace = TRUE is the default.\cr
-A probability in the probability vector returned by the function belongs to the observation whose binary value matches the value of the index (using zero-indexing).\cr
-To fix the value of J_ij choose an initial distribution with the desired value of J_ij and remove the edge ij from G.
+The graph G specifies which undirected graph the maximum likelihood estimator
+should be Markov with respect to. The graph should be specified as a list
+with the first element being a vector containing the vertices of the graph
+and the second element being a matrix containing the edges in the rows. Make
+sure the naming of the vertices and the edges match.\cr If the maximum
+likelihood estimator is on the boundary of the parameter space only the mean
+value parameters will be returned. Otherwise the canonical parameters h and J
+will also be returned.\cr Note that currently the behaviour of the algorithm
+on the boundary is not as desired and using zeroReplace = TRUE is the
+default.\cr A probability in the probability vector returned by the function
+belongs to the observation whose binary value matches the value of the index
+(using zero-indexing).\cr To fix the value of J_ij choose an initial
+distribution with the desired value of J_ij and remove the edge ij from G.
 }

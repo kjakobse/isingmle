@@ -2,7 +2,8 @@
 % Please edit documentation in R/IsingMLEmtp2.R
 \name{IsingMLEmtp2}
 \alias{IsingMLEmtp2}
-\title{Calculate the maximum likelihood estimator in the Ising model under MTP_2 constraint.}
+\title{Calculate the maximum likelihood estimator in the Ising model under MTP_2
+constraint.}
 \usage{
 IsingMLEmtp2(
   G,
@@ -16,35 +17,53 @@ IsingMLEmtp2(
 )
 }
 \arguments{
-\item{G}{A list containing a vector with vertices and a matrix containing edges in the rows.}
+\item{G}{A list containing a vector with vertices and a matrix containing
+edges in the rows.}
 
-\item{xBar}{An optional vector containing the sample first moment of the data. Must be specified if data is unspecified.}
+\item{xBar}{An optional vector containing the sample first moment of the
+data. Must be specified if data is unspecified.}
 
-\item{M}{An optional matrix containing the sample second moment of the data. Must be specified if data is unspecified.}
+\item{M}{An optional matrix containing the sample second moment of the data.
+Must be specified if data is unspecified.}
 
-\item{data}{An optional matrix or data frame containing samples from d binary variables with outcomes coded as -1 and 1.}
+\item{data}{An optional matrix or data frame containing samples from d
+binary variables with outcomes coded as -1 and 1.}
 
-\item{epsilon}{A numeric value > 0 specifying the tolerance for when the algorithm is considered to have converged.}
+\item{epsilon}{A numeric value > 0 specifying the tolerance for when the
+algorithm is considered to have converged.}
 
-\item{maxIter}{An integer specifying the maximum number of iterations to run the algorithm.}
+\item{maxIter}{An integer specifying the maximum number of iterations to run
+the algorithm.}
 
-\item{zeroReplace}{A boolean value indicating whether or not to replace zeroes in the empirical distribution.}
+\item{zeroReplace}{A boolean value indicating whether or not to replace
+zeroes in the empirical distribution.}
 
-\item{ReplaceValue}{A numeric value >0 specifying which value to replace zeroes with.}
+\item{ReplaceValue}{A numeric value >0 specifying which value to replace
+zeroes with.}
 }
 \value{
-\code{IsingMLEmtp2} returns a list with the estimated distribution, estimated graph, estimated parameters, and number of iterations until the algorithm converged.
+\code{IsingMLEmtp2} returns a list with the estimated distribution,
+estimated graph, estimated parameters, and number of iterations until the
+algorithm converged.
 }
 \description{
-\code{IsingMLEmtp2} fits graphical Ising models under MTP_2 constraints using an IPS-type algorithm.
+\code{IsingMLEmtp2} fits graphical Ising models under MTP_2 constraints
+using an IPS-type algorithm.
 }
 \details{
-The graph G specifies which undirected graph the maximum likelihood estimator should be Markov with respect to.
-The graph should be specified as a list with the first element being a vector containing the vertices of the graph and the second element
-being a matrix containing the edges in the rows. Make sure the naming of the vertices and the edges match.\cr
-If the maximum likelihood estimator is on the boundary of the parameter space only the mean value parameters will be returned.
-Otherwise the canonical parameters h and J will also be returned.\cr
-Note that currently the behaviour of the algorithm on the boundary is not as desired and using zeroReplace = TRUE is the default.\cr
-A probability in the probability vector returned by the function belongs to the observation whose binary value matches the value of the index (using zero-indexing). \cr
-When using zeroReplace = TRUE ReplaceValue is added to any zeroes in the pair-marginal empirical distributions used by the algorithm and an equal amount is subtracted from the remaining positive probabilities.
+The graph G specifies which undirected graph the maximum likelihood estimator
+should be Markov with respect to. The graph should be specified as a list
+with the first element being a vector containing the vertices of the graph
+and the second element being a matrix containing the edges in the rows. Make
+sure the naming of the vertices and the edges match.\cr If the maximum
+likelihood estimator is on the boundary of the parameter space only the mean
+value parameters will be returned. Otherwise the canonical parameters h and J
+will also be returned.\cr Note that currently the behaviour of the algorithm
+on the boundary is not as desired and using zeroReplace = TRUE is the
+default.\cr A probability in the probability vector returned by the function
+belongs to the observation whose binary value matches the value of the index
+(using zero-indexing). \cr When using zeroReplace = TRUE ReplaceValue is
+added to any zeroes in the pair-marginal empirical distributions used by the
+algorithm and an equal amount is subtracted from the remaining positive
+probabilities.
 }

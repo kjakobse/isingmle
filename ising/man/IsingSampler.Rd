@@ -15,27 +15,39 @@ IsingSampler(
 )
 }
 \arguments{
-\item{h}{Vector, specifying the canonical parameter h from the Ising model. Optional if p is specified.}
+\item{h}{Vector, specifying the canonical parameter h from the Ising model.
+Optional if p is specified.}
 
-\item{J}{Matrix, specifying the canonical parameter J from the Ising model. Optional if p is specified.}
+\item{J}{Matrix, specifying the canonical parameter J from the Ising model.
+Optional if p is specified.}
 
-\item{p}{Vector, specifying the distribution of the Ising model. Optional if h and J are specified.}
+\item{p}{Vector, specifying the distribution of the Ising model. Optional
+if h and J are specified.}
 
-\item{N}{Integer, specifying the number of observations in the generated data set.}
+\item{N}{Integer, specifying the number of observations in the generated
+data set.}
 
 \item{obs}{Logical, if TRUE the observations are returned in binary form.}
 
 \item{int}{Logical, if TRUE, the observations are returned as integers.}
 
-\item{matrix}{Logical, if TRUE the binary form of the observations are returned in a matrix. If FALSE the observations are returned in a data frame.}
+\item{matrix}{Logical, if TRUE the binary form of the observations are
+returned in a matrix. If FALSE the observations are returned in a data frame.}
 }
 \value{
-\code{IsingSampler} returns a simulated data set of length N from the Ising model specified by h and J or by p. The observations are returned in binary form if the obs parameter is TRUE, and as integers if the parameter int is TRUE. The matrix parameter controls if the observations in binary form are returned in a matrix or in a data frame.
+\code{IsingSampler} returns a simulated data set of length N from
+the Ising model specified by h and J or by p. The observations are returned
+in binary form if the obs parameter is TRUE, and as integers if the parameter
+int is TRUE. The matrix parameter controls if the observations in binary form
+are returned in a matrix or in a data frame.
 }
 \description{
-\code{IsingSampler} generates a data set of a specified length from an Ising model.
+\code{IsingSampler} generates a data set of a specified length from an
+Ising model.
 }
 \details{
 The matrix J should be symmetric and have zeroes in the diagonal. \cr
-A probability in the probability vector p is assumed to belong to the observation whose binary value matches the value of the index (using zero-indexing).
+A probability in the probability vector p is assumed to belong to the
+observation whose binary value matches the value of the index
+(using zero-indexing).
 }

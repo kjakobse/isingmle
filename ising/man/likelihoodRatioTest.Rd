@@ -2,7 +2,8 @@
 % Please edit documentation in R/LikelihoodRatioTest.R
 \name{likelihoodRatioTest}
 \alias{likelihoodRatioTest}
-\title{Calculate values of the log-likelihood ratio test statistic using simulated data.}
+\title{Calculate values of the log-likelihood ratio test statistic using simulated
+data.}
 \usage{
 likelihoodRatioTest(
   nSim,
@@ -27,35 +28,51 @@ likelihoodRatioTest(
 
 \item{d}{Integer specifying number of binary variables.}
 
-\item{N}{Integer specifying number of observations to be simulated from the null model.}
+\item{N}{Integer specifying number of observations to be simulated from the
+null model.}
 
-\item{largeModel}{Character string specifying the assumed model. Can be "IsingMTP2", "Ising", or "FullBinary".}
+\item{largeModel}{Character string specifying the assumed model. Can be
+"IsingMTP2", "Ising", or "FullBinary".}
 
-\item{nullModel}{Character string specifying the null model. Can be "IsingMTP2" or "Ising". The null model should always be contained in largeModel.}
+\item{nullModel}{Character string specifying the null model. Can be
+"IsingMTP2" or "Ising". The null model should always be contained in
+largeModel.}
 
-\item{epsilon}{A numeric value > 0 specifying the tolerance for when the fitting algorithm is considered to have converged.}
+\item{epsilon}{A numeric value > 0 specifying the tolerance for when the
+fitting algorithm is considered to have converged.}
 
-\item{GLarge}{List containing vector of vertices and matrix of edges. Must be specified when largeModel is "IsingMTP2" or "Ising".}
+\item{GLarge}{List containing vector of vertices and matrix of edges.
+Must be specified when largeModel is "IsingMTP2" or "Ising".}
 
 \item{GNull}{List containing vector of vertices and matrix of edges.}
 
-\item{maxIter}{Integer specifying maximum number of iterations to run the fitting algorithm.}
+\item{maxIter}{Integer specifying maximum number of iterations to run the
+fitting algorithm.}
 
-\item{nCores}{Integer specifying the number of cores to use for the simulation.}
+\item{nCores}{Integer specifying the number of cores to use for the
+simulation.}
 
-\item{zeroReplace}{A boolean value indicating whether or not to replace zeroes in the empirical distribution.}
+\item{zeroReplace}{A boolean value indicating whether or not to replace
+zeroes in the empirical distribution.}
 
-\item{ReplaceValue}{A numeric value >0 specifying which value to replace zeroes with.}
+\item{ReplaceValue}{A numeric value >0 specifying which value to replace
+zeroes with.}
 }
 \value{
-\code{likelihoodRatioTest} returns a vector of length nSim with the likelihood ratio test statistics for the data set simulated under the null model.
+\code{likelihoodRatioTest} returns a vector of length nSim with the
+likelihood ratio test statistics for the data set simulated under the null
+model.
 }
 \description{
-\code{likelihoodRatioTest} simulates data sets from a specified null-distribution and for each calculates the log-likelihood ratio test statistic for the test against the assumed model.
+\code{likelihoodRatioTest} simulates data sets from a specified
+null-distribution and for each calculates the log-likelihood ratio test
+statistic for the test against the assumed model.
 }
 \details{
-The function uses the parallel implementation in \code{parSapply} to allow running multiple simulations at a time.
-The parameter nCores should not exceed the number of logical cores on the host system.
-For larger values of d available memory also needs to be considered since the memory requirements scale linearly with the value of nCores. \cr
-As is standard for hypothesis testing the large model should contain the null model.
+The function uses the parallel implementation in \code{parSapply} to allow
+running multiple simulations at a time. The parameter nCores should not
+exceed the number of logical cores on the host system. For larger values of
+d available memory also needs to be considered since the memory requirements
+scale linearly with the value of nCores. \cr As is standard for hypothesis
+testing the large model should contain the null model.
 }

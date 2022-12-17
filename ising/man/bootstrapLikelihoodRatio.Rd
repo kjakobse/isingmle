@@ -5,7 +5,6 @@
 \title{Simulate value of likelihood ratio test statistic}
 \usage{
 bootstrapLikelihoodRatio(
-  simNum,
   p,
   d,
   N,
@@ -20,36 +19,47 @@ bootstrapLikelihoodRatio(
 )
 }
 \arguments{
-\item{simNum}{Integer}
-
 \item{p}{Vector containing the distribution of the null model.}
 
 \item{d}{Integer specifying number of binary variables.}
 
-\item{N}{Integer specifying number of observations to be simulated from the null model.}
+\item{N}{Integer specifying number of observations to be simulated from the
+null model.}
 
-\item{largeModel}{Character vector specifying the assumed model. Can be "IsingMTP2", "Ising", or "FullBinary".}
+\item{largeModel}{Character vector specifying the assumed model. Can be
+"IsingMTP2", "Ising", or "FullBinary".}
 
-\item{nullModel}{Character vector specifying the null model. Can be "IsingMTP2" or "Ising". The null model should always be contained in largeModel.}
+\item{nullModel}{Character vector specifying the null model. Can be
+"IsingMTP2" or "Ising". The null model should always be contained in
+largeModel.}
 
-\item{epsilon}{A numeric value > 0 specifying the tolerance for when the fitting algorithm is considered to have converged.}
+\item{epsilon}{A numeric value > 0 specifying the tolerance for when the
+fitting algorithm is considered to have converged.}
 
-\item{GLarge}{List containing vector of vertices and matrix of edges. Must be specified when largeModel is "IsingMTP2" or "Ising".}
+\item{GLarge}{List containing vector of vertices and matrix of edges.
+Must be specified when largeModel is "IsingMTP2" or "Ising".}
 
 \item{GNull}{List containing vector of vertices and matrix of edges.}
 
-\item{maxIter}{integer specifying maximum number of iterations to run the fitting algorithm.}
+\item{maxIter}{integer specifying maximum number of iterations to run the
+fitting algorithm.}
 
-\item{zeroReplace}{A boolean value indicating whether or not to replace zeroes in the empirical distribution.}
+\item{zeroReplace}{A boolean value indicating whether or not to replace
+zeroes in the empirical distribution.}
 
-\item{ReplaceValue}{A numeric value >0 specifying which value to replace zeroes with.}
+\item{ReplaceValue}{A numeric value >0 specifying which value to replace
+zeroes with.}
 }
 \value{
-\code{bootstrapLikelihoodRatio} returns a numeric value with the likelihood ratio test statistic for the data set simulated under the null model.
+\code{bootstrapLikelihoodRatio} returns a numeric value with the
+likelihood ratio test statistic for the data set simulated under the null
+model.
 }
 \description{
-\code{bootstrapLikelihoodRatio} calculates the likelihood ratio test statistic from a data set simulated from the specified null-distribution.
+\code{bootstrapLikelihoodRatio} calculates the likelihood ratio test
+statistic from a data set simulated from the specified null-distribution.
 }
 \details{
-This function is intended to be called by \code{LikelihoodRatioTest} and not called directly.
+This function is intended to be called by \code{LikelihoodRatioTest} and not
+called directly.
 }

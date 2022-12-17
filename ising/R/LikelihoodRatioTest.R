@@ -1,5 +1,3 @@
-library(parallel)
-
 # likelihoodRatioTest function:
 
 #' Calculate values of the log-likelihood ratio test statistic using simulated
