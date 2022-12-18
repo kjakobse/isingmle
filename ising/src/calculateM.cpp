@@ -3,7 +3,8 @@ using namespace Rcpp;
 
 //' Calculate the sample second moment
 //'
-//' \code{calculateM} calculates the sample second moment for a data set with samples from d binary variables.
+//' \code{calculateM} calculates the sample second moment for a data set with
+//' samples from d binary variables.
 //'
 //' @param data Matrix containing samples from d binary variables in the rows.
 //' @param length Integer specifying the number of samples in the data set.
@@ -12,10 +13,14 @@ using namespace Rcpp;
 //' @export
 //'
 // [[Rcpp::export]]
-NumericMatrix calculateM(NumericMatrix data, unsigned long long int length, int d) {
+NumericMatrix calculateM(NumericMatrix data,
+                         unsigned long long int length,
+                         int d) {
   NumericMatrix matrixM(d, d);
 
-// run through each entry in matrixM and for each check if each sample has t'th and u'th coordinate equal. If so add 1/length since the product of the two coordinates is 1.
+// run through each entry in matrixM and for each check if each sample has t'th
+// and u'th coordinate equal. If so add 1/length since the product of the two
+// coordinates is 1.
 // If not subtract 1/length since the product of the two coordinates is -1:
   for (int t = 0; t < d; t++) {
     for (int u = 0; u < d; u++) {
