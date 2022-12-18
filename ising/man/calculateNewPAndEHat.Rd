@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateNewPAndEHat}
 \alias{calculateNewPAndEHat}
-\title{Updates the distribution of the Ising model with MTP2 constraints and the fitted graph}
+\title{Updates the distribution of the Ising model with MTP2 constraints and the
+fitted graph}
 \usage{
 calculateNewPAndEHat(ePlus, d, e, p, eHat, capitalJ, iter)
 }
@@ -11,23 +12,30 @@ calculateNewPAndEHat(ePlus, d, e, p, eHat, capitalJ, iter)
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{Matrix containing the empirical distributions for the edges in
+ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
 
-\item{eHat}{Matrix containing the edges in the independence graph of the distribution p.}
+\item{eHat}{Matrix containing the edges in the independence graph of the
+distribution p.}
 
 \item{capitalJ}{Matrix containing the canonical parameter J.}
 
 \item{iter}{Integer specifying the iteration of the algorithm.}
 }
 \value{
-\code{calculateNewPAndEHat} returns a list containing the updated distribution, its independence graph, and the canonical parameter J.
+\code{calculateNewPAndEHat} returns a list containing the updated
+distribution, its independence graph, and the canonical parameter J.
 }
 \description{
-\code{calculateNewPAndEHat} is intended to be used by \code{IsingMLEmtp2}. It updates the distribution p for the edges in ePlus when the empirical distributions don't contain zeroes.
+\code{calculateNewPAndEHat} is intended to be used by \code{IsingMLEmtp2}.
+It updates the distribution p for the edges in ePlus when the empirical
+distributions don't contain zeroes.
 }
 \details{
-\code{calculateNewPAndEHat} doesn't use the value of eHat. It fills the matrix eHat with the edges of the independence graph after the update.\cr
-iter is used to indicate if the provided J should be used or not. If iter = 0 J is calculated and otherwise the provided J is used.
+\code{calculateNewPAndEHat} doesn't use the value of eHat. It fills the
+matrix eHat with the edges of the independence graph after the update.\cr
+iter is used to indicate if the provided J should be used or not. If
+iter = 0 J is calculated and otherwise the provided J is used.
 }

@@ -12,8 +12,10 @@ isingLogLikelihoodProbs(data, p)
 \item{p}{Numeric vector specifying the distribution of d binary variables.}
 }
 \value{
-\code{isingLogLikelihoodProbs} returns the numeric value of the loglikelihood function.
+\code{isingLogLikelihoodProbs} returns the numeric value of the
+loglikelihood function.
 }
 \description{
-\code{isingLogLikelihoodProbs} calculates the value of the loglikelihood function for a given data set in the distribution p.
+\code{isingLogLikelihoodProbs} calculates the value of the loglikelihood
+function for a given data set in the distribution p.
 }

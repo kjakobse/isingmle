@@ -3,11 +3,13 @@ using namespace Rcpp;
 
 //' Calculate the second moment from the distribution
 //'
-//' \code{calculateNewXi} takes the distribution of d binary variables and returns the matrix of second moments.
+//' \code{calculateNewXi} takes the distribution of d binary variables and
+//' returns the matrix of second moments.
 //'
 //' @param p Numeric vector specifying the distribution of d binary variables.
 //' @param d Integer specifying the number of binary variables.
-//' @return \code{calculateNewXi} returns a numeric d by d matrix with the second moments.
+//' @return \code{calculateNewXi} returns a numeric d by d matrix with the
+//' second moments.
 //' @export
 //'
 // [[Rcpp::export]]
@@ -21,7 +23,8 @@ NumericMatrix calculateNewXi(NumericVector p, int d) {
       unsigned long long int uMask = 1 << (d - u - 1);
 
       double entryValue = 0;
-      // loop over entries in p and add if t'th and u'th observations are the same, subtract if they are opposite signs:
+      // loop over entries in p and add if t'th and u'th observations are the
+      // same, subtract if they are opposite signs:
       for (unsigned long long int v = 0; v < pLength; v++) {
         if (((bool)(v & tMask)) == ((bool)(v & uMask))) {
           entryValue += p[v]; // observations have same value

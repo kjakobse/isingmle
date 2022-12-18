@@ -14,12 +14,19 @@ calculateEmpirical(ePlus, m, xBar)
 \item{xBar}{Numeric vector containing the sample first moment.}
 }
 \value{
-\code{CalculateEmpirical} returns a List containing a matrix with the calculated empirical distributions and an integer which is 1 of any of the empirical distributions contain zeroes and is 0 otherwise.
+\code{CalculateEmpirical} returns a List containing a matrix with
+the calculated empirical distributions and an integer which is 1 of any of
+the empirical distributions contain zeroes and is 0 otherwise.
 }
 \description{
-\code{CalculateEmpirical} calculates the empirical distribution of pairs of binary variables specified by ePlus from the sample first and second moments.
+\code{CalculateEmpirical} calculates the empirical distribution of pairs of
+binary variables specified by ePlus from the sample first and second
+moments.
 }
 \details{
-ePlus should contain the variable pairs for which the empirical distribution is to be calculated. They should be coded as integers from 1 up to the number of binary variables.
-The sample moments should be ordered according to this coding, so the sample mean of variable 1 should have index 1 in xBar (using 1-indexing).
+ePlus should contain the variable pairs for which the empirical distribution
+is to be calculated. They should be coded as integers from 1 up to the
+number of binary variables.
+The sample moments should be ordered according to this coding, so the
+sample mean of variable 1 should have index 1 in xBar (using 1-indexing).
 }

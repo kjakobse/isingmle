@@ -11,13 +11,17 @@ calculateNewPAndEHatnoMTP2Boundary(ePlus, d, e, p)
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{Matrix containing the empirical distributions for the edges in
+ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
 }
 \value{
-\code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing the updated distribution.
+\code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing
+the updated distribution.
 }
 \description{
-\code{calculateNewPAndEHatnoMTP2Boundary} is intended to be used by \code{IsingMLE}. It updates the distribution p for the edges in ePlus when some of the empirical distributions contain zeroes.
+\code{calculateNewPAndEHatnoMTP2Boundary} is intended to be used by
+\code{IsingMLE}. It updates the distribution p for the edges in ePlus when
+some of the empirical distributions contain zeroes.
 }

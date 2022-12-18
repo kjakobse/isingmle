@@ -11,20 +11,28 @@ calculateNewPAndEHatnoMTP2(ePlus, d, e, p, eHat, capitalJ)
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{NumericMatrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{NumericMatrix containing the empirical distributions for the edges
+in ePlus.}
 
 \item{p}{NumericVector containing the distribution to be updated.}
 
-\item{eHat}{NumericMatrix containing the edges in the independence graph of the distribution p.}
+\item{eHat}{NumericMatrix containing the edges in the independence graph of
+the distribution p.}
 
 \item{capitalJ}{NumericMatrix containing the canonical parameter J.}
 }
 \value{
-\code{calculateNewPAndEHatnoMTP2} returns a list containing the updated distribution, its independence graph, and the canonical parameter J.
+\code{calculateNewPAndEHatnoMTP2} returns a list containing the
+updated distribution, its independence graph, and the canonical parameter J.
 }
 \description{
-\code{calculateNewPAndEHatnoMTP2} is intended to be used by \code{IsingMLE}. It updates the distribution p for the edges in ePlus when the empirical distributions don't contain zeroes.
+\code{calculateNewPAndEHatnoMTP2} is intended to be used by \code{IsingMLE}.
+It updates the distribution p for the edges in ePlus when the empirical
+distributions don't contain zeroes.
 }
 \details{
-\code{calculateNewPAndEHatnoMTP2} doesn't use the values of capitalJ or eHat. It fills the matrix capitalJ with the values of each J_ij after the update and fills the matrix eHat with the edges of the independence graph after the update.
+\code{calculateNewPAndEHatnoMTP2} doesn't use the values of capitalJ or
+eHat. It fills the matrix capitalJ with the values of each J_ij after the
+update and fills the matrix eHat with the edges of the independence graph
+after the update.
 }

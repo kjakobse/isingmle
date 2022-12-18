@@ -7,15 +7,19 @@
 calculateCondition2(e, m, xi)
 }
 \arguments{
-\item{e}{NumericMatrix containing in the rows the indices for the entries in m and xi.}
+\item{e}{NumericMatrix containing in the rows the indices for the entries
+in m and xi.}
 
 \item{m}{NumericMatrix containing a sample second moment.}
 
 \item{xi}{NumericMatrix to be compared with m.}
 }
 \value{
-\code{calculateCondition2} returns a vector with the difference between entries in m and xi for those entries specified by e.
+\code{calculateCondition2} returns a vector with the difference
+between entries in m and xi for those entries specified by e.
 }
 \description{
-\code{calculateCondition2} calculates the differences between entries in the matrices M and Xi given by E. This function is intended to be used by IsingMLE and IsingMLEmtp2.
+\code{calculateCondition2} calculates the differences between entries in
+the matrices M and Xi given by E. This function is intended to be used by
+IsingMLE and IsingMLEmtp2.
 }

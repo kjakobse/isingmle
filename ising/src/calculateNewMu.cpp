@@ -3,7 +3,8 @@ using namespace Rcpp;
 
 //' Calculate the mean vector from the distribution
 //'
-//' \code{calculateNewMu} calculates the mean for each binary variable from the distribution of d binary variables.
+//' \code{calculateNewMu} calculates the mean for each binary variable from the
+//' distribution of d binary variables.
 //'
 //' @param p Numeric vector specifying the distribution of d binary variables.
 //' @param d Integer specifying the number of binary variables.

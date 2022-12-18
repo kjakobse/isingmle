@@ -3,28 +3,36 @@ using namespace Rcpp;
 
 //' Calculate loglikelihood for data set given canonical parameters
 //'
-//' \code{isingLogLikelihoodhJ} calculates the value of the loglikelihood function for a given data set in the natural parameters h and J.
+//' \code{isingLogLikelihoodhJ} calculates the value of the loglikelihood
+//' function for a given data set in the natural parameters h and J.
 //'
-//' The loglikelihood is calculated using the formula \eqn{L(h,J|data) = \sum _{x} e^(h^T * x + x^T * J * x / 2 - A(h,J))}, where A(h,J) is a normalisation constant.
+//' The loglikelihood is calculated using the formula
+//' \eqn{L(h,J|data) = \sum _{x} e^(h^T * x + x^T * J * x / 2 - A(h,J))},
+//' where A(h,J) is a normalisation constant.
 //'
 //' @param data Matrix containing samples from d binary variables in the rows.
 //' @param h Numeric vector specifying the canonical parameter h.
 //' @param J Matrix specifying the canonical parameter J.
-//' @return  \code{isingLogLikelihoodhJ} returns the numeric value of the loglikelihood function.
+//' @return  \code{isingLogLikelihoodhJ} returns the numeric value of the
+//' loglikelihood function.
 //' @export
 //'
 // [[Rcpp::export]]
-double isingLogLikelihoodhJ(NumericMatrix data, NumericVector h, NumericMatrix J) {
+double isingLogLikelihoodhJ(NumericMatrix data,
+                            NumericVector h,
+                            NumericMatrix J) {
   int d = h.size();
   unsigned long long int nrow = data.nrow();
   unsigned long long int pLength = pow(2, d);
   double pSum = 0;
   double logLikelihood = 0;
-  // Calculate the normalisation constant A(h,J)by calculating the unnormalised distribution and summing:
+  // Calculate the normalisation constant A(h,J)by calculating the
+  // unnormalised distribution and summing:
   for (unsigned long long int t = 0; t < pLength; t++) {
     double pEntry = 0;
     for (int u = 0; u < d; u++) {
-      // mask for the index u. << is the bitwise and operator and shifts the bits to the left:
+      // mask for the index u. << is the bitwise and operator and shifts the
+      // bits to the left:
       unsigned long long int tMaskU = 1 << u;
       // use the mask to determine the value of the u'th binary variable:
       int observationValueU = -1;
@@ -39,7 +47,8 @@ double isingLogLikelihoodhJ(NumericMatrix data, NumericVector h, NumericMatrix J
         if (t & tMaskV) {
           observationValueV = 1;
         }
-        // add the J_uv term to the current entry in the unnormalised distribution:
+        // add the J_uv term to the current entry in the unnormalised
+        // distribution:
         pEntry += 0.5 * J(d-u-1, d-v-1) * observationValueU * observationValueV;
       }
       // add the h_u term to the current entry in the unnormalised distribution:

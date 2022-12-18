@@ -14,11 +14,15 @@ isingLogLikelihoodhJ(data, h, J)
 \item{J}{Matrix specifying the canonical parameter J.}
 }
 \value{
-\code{isingLogLikelihoodhJ} returns the numeric value of the loglikelihood function.
+\code{isingLogLikelihoodhJ} returns the numeric value of the
+loglikelihood function.
 }
 \description{
-\code{isingLogLikelihoodhJ} calculates the value of the loglikelihood function for a given data set in the natural parameters h and J.
+\code{isingLogLikelihoodhJ} calculates the value of the loglikelihood
+function for a given data set in the natural parameters h and J.
 }
 \details{
-The loglikelihood is calculated using the formula \eqn{L(h,J|data) = \sum _{x} e^(h^T * x + x^T * J * x / 2 - A(h,J))}, where A(h,J) is a normalisation constant.
+The loglikelihood is calculated using the formula
+\eqn{L(h,J|data) = \sum _{x} e^(h^T * x + x^T * J * x / 2 - A(h,J))},
+where A(h,J) is a normalisation constant.
 }

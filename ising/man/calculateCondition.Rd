@@ -7,15 +7,19 @@
 calculateCondition(eHatOmitNA, m, xi)
 }
 \arguments{
-\item{eHatOmitNA}{NumericMatrix containing in the rows the indices for the entries in m and xi.}
+\item{eHatOmitNA}{NumericMatrix containing in the rows the indices for the
+entries in m and xi.}
 
 \item{m}{NumericMatrix containing a sample second moment.}
 
 \item{xi}{NumericMatrix to be compared with m.}
 }
 \value{
-\code{calculateCondition} returns a vector with the distance between entries in m and xi for those entries specified by eHatOmitNA.
+\code{calculateCondition} returns a vector with the distance
+between entries in m and xi for those entries specified by eHatOmitNA.
 }
 \description{
-\code{calculateCondition} calculates the absolute differences between entries in the matrices M and Xi given by eHatOmitNA. This function is intended to be used by IsingMLE and IsingMLEmtp2.
+\code{calculateCondition} calculates the absolute differences between
+entries in the matrices M and Xi given by eHatOmitNA. This function is
+intended to be used by IsingMLE and IsingMLEmtp2.
 }

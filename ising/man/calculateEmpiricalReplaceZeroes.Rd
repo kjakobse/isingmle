@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateEmpiricalReplaceZeroes}
 \alias{calculateEmpiricalReplaceZeroes}
-\title{Calculate empirical marginal distributions of pairs in ePlus adding small epsilon to zeroes.}
+\title{Calculate empirical marginal distributions of pairs in ePlus adding small
+epsilon to zeroes.}
 \usage{
 calculateEmpiricalReplaceZeroes(ePlus, m, xBar, ReplaceValue)
 }
@@ -16,13 +17,20 @@ calculateEmpiricalReplaceZeroes(ePlus, m, xBar, ReplaceValue)
 \item{ReplaceValue}{Double to replace zeroes with. Must be >0.}
 }
 \value{
-\code{CalculateEmpirical} returns a matrix with the calculated empirical distributions.
+\code{CalculateEmpirical} returns a matrix with the calculated
+empirical distributions.
 }
 \description{
-\code{CalculateEmpiricalReplaceZeroes} calculates the empirical distribution of pairs of binary variables specified by ePlus from the sample first and second moments and adds a small positive constant if a probability is zero.
+\code{CalculateEmpiricalReplaceZeroes} calculates the empirical distribution
+of pairs of binary variables specified by ePlus from the sample first and
+second moments and adds a small positive constant if a probability is zero.
 }
 \details{
-ePlus should contain the variable pairs for which the empirical distribution is to be calculated. They should be coded as integers from 1 up to the number of binary variables.
-The sample moments should be ordered according to this coding, so the sample mean of variable 1 should have index 1 in xBar (using 1-indexing).
-The value added to the zeroes is subsequently subtracted from the positive values so they still sum to 1.
+ePlus should contain the variable pairs for which the empirical distribution
+is to be calculated. They should be coded as integers from 1 up to the
+number of binary variables.
+The sample moments should be ordered according to this coding, so the sample
+mean of variable 1 should have index 1 in xBar (using 1-indexing).
+The value added to the zeroes is subsequently subtracted from the positive
+values so they still sum to 1.
 }

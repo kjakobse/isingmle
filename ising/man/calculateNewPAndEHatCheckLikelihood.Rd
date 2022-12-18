@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateNewPAndEHatCheckLikelihood}
 \alias{calculateNewPAndEHatCheckLikelihood}
-\title{Updates the distribution of the Ising model with MTP2 constraints and the fitted graph}
+\title{Updates the distribution of the Ising model with MTP2 constraints and
+the fitted graph}
 \usage{
 calculateNewPAndEHatCheckLikelihood(
   ePlus,
@@ -21,11 +22,13 @@ calculateNewPAndEHatCheckLikelihood(
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{Matrix containing the empirical distributions for the edges in
+ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
 
-\item{eHat}{Matrix containing the edges in the independence graph of the distribution p.}
+\item{eHat}{Matrix containing the edges in the independence graph of the
+distribution p.}
 
 \item{capitalJ}{Matrix containing the canonical parameter J.}
 
@@ -36,12 +39,19 @@ calculateNewPAndEHatCheckLikelihood(
 \item{logLikelihood}{numeric value giving the likelihood for the current p.}
 }
 \value{
-\code{calculateNewPAndEHatCheckLikelihood} returns a list containing the updated distribution, its independence graph, and the canonical parameter J.
+\code{calculateNewPAndEHatCheckLikelihood} returns a list containing
+the updated distribution, its independence graph, and the canonical
+parameter J.
 }
 \description{
-\code{calculateNewPAndEHatCheckLikelihood} is intended to be used by \code{IsingMLEmtp2CheckLikelihood}. It updates the distribution p for the edges in ePlus when the empirical distributions don't contain zeroes and prints the likelihood after each iteration.
+\code{calculateNewPAndEHatCheckLikelihood} is intended to be used by
+\code{IsingMLEmtp2CheckLikelihood}. It updates the distribution p for the
+edges in ePlus when the empirical distributions don't contain zeroes and
+prints the likelihood after each iteration.
 }
 \details{
-\code{calculateNewPAndEHatCheckLikelihood} doesn't use the value of eHat. It fills the matrix eHat with the edges of the independence graph after the update.\cr
-iter is used to indicate if the provided J should be used or not. If iter = 0 J is calculated and otherwise the provided J is used.
+\code{calculateNewPAndEHatCheckLikelihood} doesn't use the value of eHat.
+It fills the matrix eHat with the edges of the independence graph after
+the update.\cr iter is used to indicate if the provided J should be used
+or not. If iter = 0 J is calculated and otherwise the provided J is used.
 }

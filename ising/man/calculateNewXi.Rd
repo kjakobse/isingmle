@@ -12,8 +12,10 @@ calculateNewXi(p, d)
 \item{d}{Integer specifying the number of binary variables.}
 }
 \value{
-\code{calculateNewXi} returns a numeric d by d matrix with the second moments.
+\code{calculateNewXi} returns a numeric d by d matrix with the
+second moments.
 }
 \description{
-\code{calculateNewXi} takes the distribution of d binary variables and returns the matrix of second moments.
+\code{calculateNewXi} takes the distribution of d binary variables and
+returns the matrix of second moments.
 }

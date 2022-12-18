@@ -17,5 +17,6 @@ calculateM(data, length, d)
 \code{calculateM} returns a matrix with the sample second moment.
 }
 \description{
-\code{calculateM} calculates the sample second moment for a data set with samples from d binary variables.
+\code{calculateM} calculates the sample second moment for a data set with
+samples from d binary variables.
 }

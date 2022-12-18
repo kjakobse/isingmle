@@ -14,8 +14,10 @@ calculatexBar(data, length, d)
 \item{d}{Integer specifying the number of binary variables.}
 }
 \value{
-\code{calculatexBar} returns a numeric vector with the sample first moment.
+\code{calculatexBar} returns a numeric vector with the sample first
+moment.
 }
 \description{
-\code{calculatexBar} calculates the sample first moment for a data set with samples from d binary variables.
+\code{calculatexBar} calculates the sample first moment for a data set with
+samples from d binary variables.
 }

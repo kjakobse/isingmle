@@ -17,5 +17,7 @@ createEPlus(e, m, xBar)
 \code{createEPlus} returns the matrix EPlus.
 }
 \description{
-\code{createEPlus} is intended to be used with \code{isingMLE} and \code{isingMLEmtp2}. It creates the matrix EPlus of edges uv where \eqn{M_uv > \bar{x}_u \bar{x}_v}.
+\code{createEPlus} is intended to be used with \code{isingMLE} and
+\code{isingMLEmtp2}. It creates the matrix EPlus of edges uv where
+\eqn{M_uv > \bar{x}_u \bar{x}_v}.
 }

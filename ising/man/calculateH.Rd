@@ -9,11 +9,14 @@ calculateH(d, p)
 \arguments{
 \item{d}{Integer specifying the number of binary variables in the sample.}
 
-\item{p}{NumericVector specifying the distribution of the d binary variables.}
+\item{p}{NumericVector specifying the distribution of the d binary
+variables.}
 }
 \value{
-\code{calculateH} returns a NumericVector with the natural parameter h.
+\code{calculateH} returns a NumericVector with the natural
+parameter h.
 }
 \description{
-\code{calculateH} calculates the natural parameter h in the Ising model from the distribution p.
+\code{calculateH} calculates the natural parameter h in the Ising model
+from the distribution p.
 }

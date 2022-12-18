@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateNewPAndEHatBoundary}
 \alias{calculateNewPAndEHatBoundary}
-\title{Updates the distribution of the Ising model with MTP2 constraints on the boundary}
+\title{Updates the distribution of the Ising model with MTP2 constraints on the
+boundary}
 \usage{
 calculateNewPAndEHatBoundary(ePlus, d, e, p, eHat)
 }
@@ -11,15 +12,20 @@ calculateNewPAndEHatBoundary(ePlus, d, e, p, eHat)
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{Matrix containing the empirical distributions for the edges in
+ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
 
-\item{eHat}{Matrix containing the edges in the independence graph of the distribution p.}
+\item{eHat}{Matrix containing the edges in the independence graph of the
+distribution p.}
 }
 \value{
-\code{calculateNewPAndEHatBoundary} returns a list containing the updated distribution and its independence graph.
+\code{calculateNewPAndEHatBoundary} returns a list containing the
+updated distribution and its independence graph.
 }
 \description{
-\code{calculateNewPAndEHatBoundary} is intended to be used by \code{IsingMLEmtp2}. It updates the distribution p for the edges in ePlus when some of the empirical distributions contain zeroes.
+\code{calculateNewPAndEHatBoundary} is intended to be used by
+\code{IsingMLEmtp2}. It updates the distribution p for the edges in ePlus
+when some of the empirical distributions contain zeroes.
 }

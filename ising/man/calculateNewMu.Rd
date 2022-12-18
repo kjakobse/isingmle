@@ -15,5 +15,6 @@ calculateNewMu(p, d)
 \code{calculateNewMu} returns a numeric vector with the means.
 }
 \description{
-\code{calculateNewMu} calculates the mean for each binary variable from the distribution of d binary variables.
+\code{calculateNewMu} calculates the mean for each binary variable from the
+distribution of d binary variables.
 }

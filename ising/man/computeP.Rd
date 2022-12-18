@@ -12,12 +12,18 @@ computeP(h, J)
 \item{J}{Matrix specifying the canonical parameter J.}
 }
 \value{
-\code{computeP} returns a numeric vector with the distribution of the Ising model with canonical parameters h and J.
+\code{computeP} returns a numeric vector with the distribution of
+the Ising model with canonical parameters h and J.
 }
 \description{
-\code{computeP} calculates the distribution of an Ising model from the canonical parameters h and J.
+\code{computeP} calculates the distribution of an Ising model from the
+canonical parameters h and J.
 }
 \details{
-The distribution p is returned in a vector where the index (using 0-indexing) corresponds to the base 10 value of the binary observation. \cr
-The probability p(x) is obtained using the formula \eqn{p(x) = e^(h^T * x + x^T * J * x / 2 - A(h,J))}, where A(h,J) is a normalisation constant.
+The distribution p is returned in a vector where the index
+(using 0-indexing) corresponds to the base 10 value of the binary
+observation. \cr
+The probability p(x) is obtained using the formula
+\eqn{p(x) = e^(h^T * x + x^T * J * x / 2 - A(h,J))},
+where A(h,J) is a normalisation constant.
 }

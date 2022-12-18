@@ -12,11 +12,16 @@ binaryLogLikelihood(intData, d)
 \item{d}{Integer specifying the number of binary variables.}
 }
 \value{
-\code{binaryLogLikelihood} returns a numeic value with the log-likelihood.
+\code{binaryLogLikelihood} returns a numeic value with the
+log-likelihood.
 }
 \description{
-\code{binaryLogLikelihood} calculates the log-likelihood for a data set from d binary variables in the maximum likelihood estimator among all binary distributions.
+\code{binaryLogLikelihood} calculates the log-likelihood for a data set
+from d binary variables in the maximum likelihood estimator among all
+binary distributions.
 }
 \details{
-The data must be given as a vector of integers, where each entry corresponds to an observation from the d binary variables with the value of its binary representation equal to the value of the integer.
+The data must be given as a vector of integers, where each entry
+corresponds to an observation from the d binary variables with the value of
+its binary representation equal to the value of the integer.
 }

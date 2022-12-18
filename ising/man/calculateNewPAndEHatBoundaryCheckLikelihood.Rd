@@ -2,7 +2,8 @@
 % Please edit documentation in R/RcppExports.R
 \name{calculateNewPAndEHatBoundaryCheckLikelihood}
 \alias{calculateNewPAndEHatBoundaryCheckLikelihood}
-\title{Updates the distribution of the Ising model with MTP2 constraints on the boundary}
+\title{Updates the distribution of the Ising model with MTP2 constraints on the
+boundary}
 \usage{
 calculateNewPAndEHatBoundaryCheckLikelihood(
   ePlus,
@@ -19,19 +20,26 @@ calculateNewPAndEHatBoundaryCheckLikelihood(
 
 \item{d}{Integer containing the number of binary variables.}
 
-\item{e}{Matrix containing the empirical distributions for the edges in ePlus.}
+\item{e}{Matrix containing the empirical distributions for the edges in
+ePlus.}
 
 \item{p}{Numeric vector containing the distribution to be updated.}
 
-\item{eHat}{Matrix containing the edges in the independence graph of the distribution p.}
+\item{eHat}{Matrix containing the edges in the independence graph of the
+distribution p.}
 
 \item{data}{Matrix containing dataset to calculate log-likelihood.}
 
 \item{logLikelihood}{numeric value giving the likelihood for the current p.}
 }
 \value{
-\code{calculateNewPAndEHatBoundaryCheckLikelihood} returns a list containing the updated distribution, its independence graph, and the log-likelihood.
+\code{calculateNewPAndEHatBoundaryCheckLikelihood} returns a list
+containing the updated distribution, its independence graph, and the
+log-likelihood.
 }
 \description{
-\code{calculateNewPAndEHatBoundaryCheckLikelihood} is intended to be used by \code{IsingMLEmtp2CheckLikelihood}. It updates the distribution p for the edges in ePlus when some of the empirical distributions contain zeroes and prints the likelihood after each iteration.
+\code{calculateNewPAndEHatBoundaryCheckLikelihood} is intended to be used
+by \code{IsingMLEmtp2CheckLikelihood}. It updates the distribution p for
+the edges in ePlus when some of the empirical distributions contain zeroes
+and prints the likelihood after each iteration.
 }
