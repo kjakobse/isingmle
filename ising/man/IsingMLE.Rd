@@ -63,3 +63,10 @@ A probability in the probability vector returned by the function belongs to
 the observation whose binary value matches the value of the index
 (using zero-indexing).
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

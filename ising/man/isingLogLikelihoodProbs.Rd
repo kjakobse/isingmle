@@ -19,3 +19,10 @@ loglikelihood function.
 \code{isingLogLikelihoodProbs} calculates the value of the loglikelihood
 function for a given data set in the distribution p.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

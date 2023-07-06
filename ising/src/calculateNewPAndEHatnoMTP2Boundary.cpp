@@ -14,9 +14,14 @@ using namespace Rcpp;
 //' @param p Numeric vector containing the distribution to be updated.
 //' @return \code{calculateNewPAndEHatnoMTP2Boundary} returns a list containing
 //' the updated distribution.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus,
                                         int d,
                                         NumericMatrix e,
@@ -62,22 +67,22 @@ List calculateNewPAndEHatnoMTP2Boundary(NumericMatrix ePlus,
 
     // calculate the factors with which to update the probabilities in p.
     // If the empirical distribution is 0 the corresponding q is set equal to 0:
-    if(abs(e(t, 0)) < 1e-15 || abs(p11) < 1e-15) {
+    if (abs(e(t, 0)) < 1e-15 || abs(p11) < 1e-15) {
       q11 = 0;
     } else {
       q11 = e(t, 0) / p11;
     }
-    if(abs(e(t, 1)) < 1e-15 || abs(p10) < 1e-15) {
+    if (abs(e(t, 1)) < 1e-15 || abs(p10) < 1e-15) {
       q10 = 0;
     } else {
       q10 = e(t, 1) / p10;
     }
-    if(abs(e(t, 2)) < 1e-15 || abs(p01) < 1e-15) {
+    if (abs(e(t, 2)) < 1e-15 || abs(p01) < 1e-15) {
       q01 = 0;
     } else {
       q01 = e(t, 2) / p01;
     }
-    if(abs(e(t, 3)) < 1e-15 || abs(p00) < 1e-15) {
+    if (abs(e(t, 3)) < 1e-15 || abs(p00) < 1e-15) {
       q00 = 0;
     } else {
       q00 = e(t, 3) / p00;

@@ -18,3 +18,10 @@ calculateNewMu(p, d)
 \code{calculateNewMu} calculates the mean for each binary variable from the
 distribution of d binary variables.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

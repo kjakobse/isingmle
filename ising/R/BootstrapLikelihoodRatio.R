@@ -31,10 +31,13 @@
 #' @return \code{bootstrapLikelihoodRatio} returns a numeric value with the
 #' likelihood ratio test statistic for the data set simulated under the null
 #' model.
+#' @author Kim Daniel Jakobsen
+#' @examples
+#' 1+1
+#'
 #' @export
 #' @exportPattern "^[[:alpha:]]+"
-#' @importFrom stats na.omit
-#' @import parallel
+
 bootstrapLikelihoodRatio <- function(p,
                                      d,
                                      N,

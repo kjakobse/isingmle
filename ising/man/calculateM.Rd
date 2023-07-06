@@ -20,3 +20,10 @@ calculateM(data, length, d)
 \code{calculateM} calculates the sample second moment for a data set with
 samples from d binary variables.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

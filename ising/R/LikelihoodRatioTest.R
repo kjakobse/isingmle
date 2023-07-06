@@ -40,6 +40,10 @@
 #' @return \code{likelihoodRatioTest} returns a vector of length nSim with the
 #' likelihood ratio test statistics for the data set simulated under the null
 #' model.
+#' @author Kim Daniel Jakobsen
+#' @examples
+#' 1+1
+#'
 #' @export
 likelihoodRatioTest <- function(nSim,
                                 p,
@@ -79,8 +83,8 @@ likelihoodRatioTest <- function(nSim,
       )
     )
   } else {
-    cl <- makeCluster(nCores)
-    res <- parSapply(
+    cl <- parallel::makeCluster(nCores)
+    res <- parallel::parSapply(
       cl,
       integer(nSim),
       function(...) {
@@ -110,7 +114,7 @@ likelihoodRatioTest <- function(nSim,
       zeroReplace = zeroReplace,
       ReplaceValue = ReplaceValue
     )
-    stopCluster(cl)
+    parallel::stopCluster(cl)
   }
 
   return(res)

@@ -63,3 +63,10 @@ statistic from a data set simulated from the specified null-distribution.
 This function is intended to be called by \code{LikelihoodRatioTest} and not
 called directly.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

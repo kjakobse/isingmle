@@ -22,9 +22,14 @@ using namespace Rcpp;
 //' @param ReplaceValue Double to replace zeroes with. Must be >0.
 //' @return \code{CalculateEmpirical} returns a matrix with the calculated
 //' empirical distributions.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericMatrix calculateEmpiricalReplaceZeroes(NumericMatrix ePlus,
                                               NumericMatrix m,
                                               NumericVector xBar,
@@ -99,12 +104,12 @@ NumericMatrix calculateEmpiricalReplaceZeroes(NumericMatrix ePlus,
                           empirical(t, 1) +
                           empirical(t, 2) +
                           empirical(t, 3);
-    if(empiricalsum != 1) {
+    if (empiricalsum != 1) {
       empirical(t, 0) /= empiricalsum;
       empirical(t, 1) /= empiricalsum;
       empirical(t, 2) /= empiricalsum;
       empirical(t, 3) /= empiricalsum;
-      }
+    }
   }
   return(empirical);
 }

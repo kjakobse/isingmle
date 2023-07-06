@@ -10,9 +10,14 @@ using namespace Rcpp;
 //' @param length Integer specifying the number of samples in the data set.
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{calculateM} returns a matrix with the sample second moment.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericMatrix calculateM(NumericMatrix data,
                          unsigned long long int length,
                          int d) {

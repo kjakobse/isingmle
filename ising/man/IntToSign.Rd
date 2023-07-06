@@ -20,3 +20,7 @@ containing the sign representation of the input integer.
 \code{IntToSign} converts an integer to a binary number where 0 is
 represented with -1 and 1 is represented with 1.
 }
+\examples{
+1+1
+
+}

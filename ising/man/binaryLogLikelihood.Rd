@@ -25,3 +25,10 @@ The data must be given as a vector of integers, where each entry
 corresponds to an observation from the d binary variables with the value of
 its binary representation equal to the value of the integer.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

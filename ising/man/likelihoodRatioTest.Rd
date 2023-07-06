@@ -76,3 +76,10 @@ d available memory also needs to be considered since the memory requirements
 scale linearly with the value of nCores. \cr As is standard for hypothesis
 testing the large model should contain the null model.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

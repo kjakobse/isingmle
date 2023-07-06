@@ -17,9 +17,14 @@ using namespace Rcpp;
 //' @param J Matrix specifying the canonical parameter J.
 //' @return \code{computeP} returns a numeric vector with the distribution of
 //' the Ising model with canonical parameters h and J.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericVector computeP(NumericVector h, NumericMatrix J) {
   // initialise number of variables and number of possible observations from
   // size of h:
@@ -42,7 +47,7 @@ NumericVector computeP(NumericVector h, NumericMatrix J) {
         observationValueU = 1;
       }
       // loop over second indices in J:
-      for(int v = 0; v < d; v++) {
+      for (int v = 0; v < d; v++) {
         // mask for index v then determine the value of the v'th binary
         // variable for the current index of p:
         unsigned long long int tMaskV = 1 << v;

@@ -11,9 +11,14 @@ using namespace Rcpp;
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{calculatexBar} returns a numeric vector with the sample first
 //' moment.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericVector calculatexBar(NumericMatrix data,
                             unsigned long long int length,
                             int d) {

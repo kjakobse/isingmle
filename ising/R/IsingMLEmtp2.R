@@ -41,6 +41,10 @@
 #' @return \code{IsingMLEmtp2} returns a list with the estimated distribution,
 #' estimated graph, estimated parameters, and number of iterations until the
 #' algorithm converged.
+#' @author Kim Daniel Jakobsen
+#' @examples
+#' 1+1
+#'
 #' @export
 IsingMLEmtp2 <- function(G,
                          xBar = NULL,
@@ -53,8 +57,10 @@ IsingMLEmtp2 <- function(G,
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) !=2) stop("G must be a list of length two.")
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) {
-    stop(paste("G must contain a vector with vertices and a matrix with two",
-               "columns having edges in the rows."))
+    stop(
+      "G must contain a vector with vertices and a matrix with two ",
+      "columns having edges in the rows."
+    )
   }
   V <- seq_along(G[[1]])
   E <- matrix(data = 0, nrow = nrow(G[[2]]), ncol = ncol(G[[2]]))
@@ -101,7 +107,7 @@ IsingMLEmtp2 <- function(G,
 
   # Initiate the conditions on Xi. Inf ensures that the statement
   # max(condition > epsilon) is always true initially:
-  condition <- c(Inf)
+  condition <- Inf
   condition2 <- calculateCondition2(E, M, Xi)
 
   if(zeroReplace) {
@@ -110,9 +116,11 @@ IsingMLEmtp2 <- function(G,
     empirical <- calculateEmpiricalReplaceZeroes(ePlus, M, xBar, ReplaceValue)
     econtainsZeroes <- 0
     if (ncol(empirical) == 0) {
-      stop (cat("input doesn't fulfill conditions for existence of MLE.",
-                "\n",
-                "Produced negative values of the empirical distribution."))
+      stop (
+        "input doesn't fulfill conditions for existence of MLE.",
+        "\n",
+        "Produced negative values of the empirical distribution."
+      )
     }
   } else{
     # Calculate the empirical distribution for each variable pair in ePlus and
@@ -134,7 +142,7 @@ IsingMLEmtp2 <- function(G,
     # while loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
     while (
-      (iter < maxIter) &
+      (iter < maxIter) &&
       (
         max(abs(mu-xBar)) > epsilon |
         suppressWarnings(max(condition2) > epsilon) |
@@ -143,12 +151,14 @@ IsingMLEmtp2 <- function(G,
     ){
       # Update the distribution for each variable pair in ePlus, and update the
       # edges in the fitted graph:
-      pAndEHatResult <- calculateNewPAndEHatBoundary(ePlus,
-                                                     d,
-                                                     empirical,
-                                                     p,
-                                                     eHat)
-      if(length(pAndEHatResult$p) == 1 & is.na(pAndEHatResult$p[1])) {
+      pAndEHatResult <- calculateNewPAndEHatBoundary(
+        ePlus,
+        d,
+        empirical,
+        p,
+        eHat
+      )
+      if(length(pAndEHatResult$p) == 1 && is.na(pAndEHatResult$p[1])) {
         stop("update could not find indices to calculate J")
       }
       p <- pAndEHatResult$p
@@ -193,7 +203,7 @@ IsingMLEmtp2 <- function(G,
     # While loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
     while (
-      (iter < maxIter) &
+      (iter < maxIter) &&
       (
         max(abs(mu-xBar)) > epsilon |
         suppressWarnings(max(condition2) > epsilon) |
@@ -203,13 +213,15 @@ IsingMLEmtp2 <- function(G,
       # Update the distribution for each variable pair in ePlus, update the
       # edges in the fitted graph, and calculate the value of the canonical
       # parameter J for the updated Ising model:
-      pAndEHatResult <- calculateNewPAndEHat(ePlus,
-                                             d,
-                                             empirical,
-                                             p,
-                                             eHat,
-                                             capitalJ,
-                                             iter)
+      pAndEHatResult <- calculateNewPAndEHat(
+        ePlus,
+        d,
+        empirical,
+        p,
+        eHat,
+        capitalJ,
+        iter
+      )
       p <- pAndEHatResult$p
       eHat <- pAndEHatResult$eHat
       capitalJ <- pAndEHatResult$J

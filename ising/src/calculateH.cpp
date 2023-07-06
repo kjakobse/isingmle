@@ -11,9 +11,14 @@ using namespace Rcpp;
 //' variables.
 //' @return \code{calculateH} returns a NumericVector with the natural
 //' parameter h.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericVector calculateH(int d, NumericVector p) {
   NumericVector h(d);
 

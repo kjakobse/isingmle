@@ -15,9 +15,14 @@ using namespace Rcpp;
 //' @param J Matrix specifying the canonical parameter J.
 //' @return  \code{isingLogLikelihoodhJ} returns the numeric value of the
 //' loglikelihood function.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 double isingLogLikelihoodhJ(NumericMatrix data,
                             NumericVector h,
                             NumericMatrix J) {
@@ -39,7 +44,7 @@ double isingLogLikelihoodhJ(NumericMatrix data,
       if (t & tMaskU) {
         observationValueU = 1;
       }
-      for(int v = 0; v < d; v++) {
+      for (int v = 0; v < d; v++) {
         // mask for the index v.
         unsigned long long int tMaskV = 1 << v;
         // use the mask to determine the value of the v'th binary variable:
@@ -65,7 +70,7 @@ double isingLogLikelihoodhJ(NumericMatrix data,
     double dataEntry = 0;
     // calculate the loglikelihood of the t'th sample in the data set:
     for (int u = 0; u < d; u++) {
-      for(int v = 0; v < d; v++) {
+      for (int v = 0; v < d; v++) {
         dataEntry += 0.5 * J(u, v) * data(t, u) * data(t, v);
       }
       dataEntry += h(u) * data(t, u);

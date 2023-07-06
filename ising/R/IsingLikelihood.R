@@ -16,6 +16,10 @@
 #' @param p Vector containing the distribution of the Ising model.
 #' @return \code{IsingLogLikelihood} returns a numeric value with the
 #' log-likelihood of the data set for the specified Ising model.
+#' @author Kim Daniel Jakobsen
+#' @examples
+#' 1+1
+#'
 #' @export
 IsingLogLikelihood <- function(data,
                                h = NULL,
@@ -23,11 +27,11 @@ IsingLogLikelihood <- function(data,
                                p = NULL) {
   # the functions call lower level c++ functions based on whether h and J or p
   # is specified.
-  if(is.null(h) & is.null(J) & !is.null(p)) {
+  if(is.null(h) && is.null(J) && !is.null(p)) {
     return(isingLogLikelihoodProbs(data, p))
   }
-  if(!is.null(h) & !is.null(J) & is.null(p)) {
-    return(IsingLogLikelihood <- isingLogLikelihoodhJ(data, h, J))
+  if(!is.null(h) && !is.null(J) && is.null(p)) {
+    return(isingLogLikelihoodhJ(data, h, J))
   }
   stop(paste("Must specify either the natural parameters",
               "h and J or the probability vector p"))

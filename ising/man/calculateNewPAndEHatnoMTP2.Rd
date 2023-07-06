@@ -36,3 +36,10 @@ eHat. It fills the matrix capitalJ with the values of each J_ij after the
 update and fills the matrix eHat with the edges of the independence graph
 after the update.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

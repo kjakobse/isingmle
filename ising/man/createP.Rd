@@ -23,3 +23,10 @@ that the algorithms start from.
 The initial distribution has the form
 \eqn{p(x) = 2^{-|V|}\prod_{v \in V}(1 + x_v \mu_v)}.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

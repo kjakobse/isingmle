@@ -30,3 +30,10 @@ number of binary variables.
 The sample moments should be ordered according to this coding, so the
 sample mean of variable 1 should have index 1 in xBar (using 1-indexing).
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

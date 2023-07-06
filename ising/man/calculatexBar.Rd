@@ -21,3 +21,10 @@ moment.
 \code{calculatexBar} calculates the sample first moment for a data set with
 samples from d binary variables.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

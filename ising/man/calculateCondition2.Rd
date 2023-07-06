@@ -23,3 +23,10 @@ between entries in m and xi for those entries specified by e.
 the matrices M and Xi given by E. This function is intended to be used by
 IsingMLE and IsingMLEmtp2.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

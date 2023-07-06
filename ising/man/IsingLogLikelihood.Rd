@@ -29,3 +29,10 @@ the distribution p. \cr
 A probability in the probability p belongs to the observation whose binary
 value matches the value of the index (using zero-indexing).
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

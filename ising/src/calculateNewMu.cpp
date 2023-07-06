@@ -9,9 +9,14 @@ using namespace Rcpp;
 //' @param p Numeric vector specifying the distribution of d binary variables.
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{calculateNewMu} returns a numeric vector with the means.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericVector calculateNewMu(NumericVector p, int d) {
   NumericVector mu(d);
   unsigned long long int pLength = p.size();

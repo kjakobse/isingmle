@@ -27,6 +27,10 @@
 #' in binary form if the obs parameter is TRUE, and as integers if the parameter
 #' int is TRUE. The matrix parameter controls if the observations in binary form
 #' are returned in a matrix or in a data frame.
+#' @author Kim Daniel Jakobsen
+#' @examples
+#' 1+1
+#'
 #' @export
 IsingSampler <- function(h = NULL,
                          J = NULL,
@@ -35,15 +39,11 @@ IsingSampler <- function(h = NULL,
                          obs = TRUE,
                          int = FALSE,
                          matrix = FALSE) {
-  if(!is.null(h)) {
-    if(!(is.numeric(h))) stop("h must be a numeric vector")
-  }
-  if(!is.null(J)) {
-    if(!(is.matrix(J) & isSymmetric(J) & length(h) == dim(J)[1])) {
-      stop(
-        "J must be a symmetric matrix with dimensions equal to the lenght of h."
-      )
-    }
+  if (!(is.null(h) || is.numeric(h))) stop("h must be a numeric vector")
+  if (!(is.null(J) || is.matrix(J) && isSymmetric(J) && length(h) == dim(J)[1])) {
+    stop(
+      "J must be a symmetric matrix with dimensions equal to the lenght of h."
+    )
   }
 
   # Initiate the number of binary variables d, and the distribution p:
@@ -61,33 +61,34 @@ IsingSampler <- function(h = NULL,
   # Return the sampled data in the format specified by the input. Either just
   # the integers, just the corresponding binary observations, or both:
   if (matrix) {
-    if(int & obs) {
+    if (int & obs) {
       Sample <- matrix(0, N, d)
-      for(i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
+      for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(list(observations = Sample, observations_int = IntSample))
-    } else if(obs) {
+    } else if (obs) {
       Sample <- matrix(0, N, d)
-      for(i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
+      for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(Sample)
-    } else if(int) {
+    } else if (int) {
       return(IntSample)
     } else {
       stop("At least one of obs or int should be set to TRUE")
     }
   } else {
-    if(int & obs) {
+    if (int & obs) {
       Sample <- matrix(0, N, d)
-      for(i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
+      for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(
         list(
           observations = as.data.frame(Sample),
-          observations_int = IntSample)
+          observations_int = IntSample
+        )
       )
-    } else if(obs) {
+    } else if (obs) {
       Sample <- matrix(0, N, d)
-      for(i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
+      for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(as.data.frame(Sample))
-    } else if(int) {
+    } else if (int) {
       return(IntSample)
     } else {
       stop("At least one of obs or int should be set to TRUE")

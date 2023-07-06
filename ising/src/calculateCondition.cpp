@@ -14,8 +14,12 @@ using namespace Rcpp;
 //' @return \code{calculateCondition} returns a vector with the distance
 //' between entries in m and xi for those entries specified by eHatOmitNA.
 //' @export
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
 //'
 // [[Rcpp::export]]
+
 NumericVector calculateCondition(NumericMatrix eHatOmitNA,
                                  NumericMatrix m,
                                  NumericMatrix xi) {

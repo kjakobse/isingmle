@@ -15,9 +15,14 @@ using namespace Rcpp;
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{binaryLogLikelihood} returns a numeic value with the
 //' log-likelihood.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 double binaryLogLikelihood(NumericVector intData,
                            int d) {
   unsigned long long int length = intData.size();
@@ -25,14 +30,14 @@ double binaryLogLikelihood(NumericVector intData,
   NumericVector counts(pow(2, d));
 
 // count the number of each outcome observed:
-  for(unsigned long long int t = 0; t < length; t++) {
+  for (unsigned long long int t = 0; t < length; t++) {
     counts[intData[t]]++;
   }
 
 // Calculate the log-likelihood for the model with probabilities equal to
 //the sample proportions:
-  for(unsigned long long int i = 0; i < pow(2, d); i++) {
-    if(counts[i] > 0) {
+  for (unsigned long long int i = 0; i < pow(2, d); i++) {
+    if (counts[i] > 0) {
       logLikelihood += counts[i] * log(counts[i] / length);
     }
   }

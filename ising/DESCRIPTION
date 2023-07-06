@@ -1,12 +1,12 @@
 Package: ising
 Type: Package
 Title: Fit MTP2 Ising models
-Version: 0.2.2
+Version: 0.2.3
 Author: Kim Daniel Jakobsen
 Authors@R: 
     person("Kim Daniel", "Jakobsen", , 
            "kim.jakobsen@jc-aps.dk", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0003-0086-9980"))
 Maintainer: Kim Daniel Jakobsen <kimmsn@jc-aps.dk>
 Description: Compute the maximum likelihood estimator in Ising models with or 
     without MTP2 restrictions and/or Markov restrictions. Can handle estimates 
@@ -14,8 +14,18 @@ Description: Compute the maximum likelihood estimator in Ising models with or
     likelihood ratio test statistics using multiple cores.
 License: EUPL
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 LinkingTo: Rcpp
-Imports: Rcpp, parallel, rlang
+Imports:
+  parallel,
+  Rcpp, 
+  rlang
+Depends:
+  R (>= 4.0)
+Suggests:
+  knitr,
+  rmarkdown,
+  testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

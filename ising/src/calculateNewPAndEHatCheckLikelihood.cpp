@@ -28,9 +28,14 @@ using namespace Rcpp;
 //' @return \code{calculateNewPAndEHatCheckLikelihood} returns a list containing
 //' the updated distribution, its independence graph, and the canonical
 //' parameter J.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 List calculateNewPAndEHatCheckLikelihood(NumericMatrix ePlus,
                                          int d,
                                          NumericMatrix e,
@@ -92,7 +97,7 @@ List calculateNewPAndEHatCheckLikelihood(NumericMatrix ePlus,
     unsigned long long int v3 = jMask;
     unsigned long long int v4 = iMask | jMask;
     // If iter = 0, calculate J:
-    if(iter == 0) {
+    if (iter == 0) {
       capitalJ(i-1, j-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
       capitalJ(j-1, i-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
     }
@@ -118,7 +123,7 @@ List calculateNewPAndEHatCheckLikelihood(NumericMatrix ePlus,
       double b = e(t, 0) + e(t, 3) + capitalC * (e(t, 1) + e(t, 2));
       double c = e(t, 0) * e(t, 3) - capitalC * (e(t, 1) * e(t, 2));
       double lambda;
-      if(a == 0) {
+      if (a == 0) {
         lambda = -c / b;
       } else {
         // the shift is the root of a quadratic function:
@@ -161,19 +166,19 @@ List calculateNewPAndEHatCheckLikelihood(NumericMatrix ePlus,
     double newlogLikelihood = 0;
     // For each sample look up the corresponding probability in p and add the
     // log to the loglikelihood:
-    for(unsigned long long int t = 0; t < nrow; t++) {
+    for (unsigned long long int t = 0; t < nrow; t++) {
       double pEntry = 0;
       for (int u = 0; u < d; u++) {
-        if(data(t, u) == 1) {
+        if (data(t, u) == 1) {
           pEntry += pow(2, d-u-1);
         }
       }
       newlogLikelihood += log(p[pEntry]);
     }
 
-    if(newlogLikelihood < logLikelihood - 1e-5) {
+    if (newlogLikelihood < logLikelihood - 1e-5) {
       likelihoodCounter++;
-      if(likelihoodCounter>1){
+      if (likelihoodCounter>1) {
         return List::create(_["p"] = -1);
       }
       std::cout <<

@@ -19,3 +19,10 @@ second moments.
 \code{calculateNewXi} takes the distribution of d binary variables and
 returns the matrix of second moments.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

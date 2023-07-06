@@ -22,9 +22,14 @@ using namespace Rcpp;
 //' @param capitalJ NumericMatrix containing the canonical parameter J.
 //' @return \code{calculateNewPAndEHatnoMTP2} returns a list containing the
 //' updated distribution, its independence graph, and the canonical parameter J.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus,
                                 int d,
                                 NumericMatrix e,
@@ -97,7 +102,7 @@ List calculateNewPAndEHatnoMTP2(NumericMatrix ePlus,
     capitalJ(i-1, j-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
     capitalJ(j-1, i-1) = 0.25 * log(p[v1] * p[v4] / (p[v2] * p[v3]));
     // The independence graph of the distribution p is updated:
-    if(abs(capitalJ(i-1, j-1)) < 1e-15) {
+    if (abs(capitalJ(i-1, j-1)) < 1e-15) {
       eHat(t, 0) = NA_REAL;
       eHat(t, 1) = NA_REAL;
     } else {

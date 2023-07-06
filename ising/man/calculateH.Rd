@@ -20,3 +20,10 @@ parameter h.
 \code{calculateH} calculates the natural parameter h in the Ising model
 from the distribution p.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

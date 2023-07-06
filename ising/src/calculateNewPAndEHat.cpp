@@ -24,9 +24,14 @@ using namespace Rcpp;
 //' @param iter Integer specifying the iteration of the algorithm.
 //' @return \code{calculateNewPAndEHat} returns a list containing the updated
 //' distribution, its independence graph, and the canonical parameter J.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 List calculateNewPAndEHat(NumericMatrix ePlus,
                           int d,
                           NumericMatrix e,

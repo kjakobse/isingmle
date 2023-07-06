@@ -27,3 +27,10 @@ The probability p(x) is obtained using the formula
 \eqn{p(x) = e^(h^T * x + x^T * J * x / 2 - A(h,J))},
 where A(h,J) is a normalisation constant.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

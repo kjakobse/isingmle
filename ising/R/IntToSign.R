@@ -10,6 +10,10 @@
 #' @param digits Integer specifying how many digits should be returned.
 #' @return \code{IntToSign} returns a vector with length equal to digits,
 #' containing the sign representation of the input integer.
+#' @examples
+#' 1+1
+#'
+
 IntToSign <- function(x, digits) {
   i <- 0L
   Sign <- rep(-1, digits)

@@ -67,3 +67,10 @@ added to any zeroes in the pair-marginal empirical distributions used by the
 algorithm and an equal amount is subtracted from the remaining positive
 probabilities.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

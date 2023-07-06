@@ -11,9 +11,14 @@ using namespace Rcpp;
 //' @param m Matrix containing the sample second moment.
 //' @param xBar Numeric vector containing the sample first moment.
 //' @return \code{createEPlus} returns the matrix EPlus.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericMatrix createEPlus(NumericMatrix e,
                           NumericMatrix m,
                           NumericVector xBar) {

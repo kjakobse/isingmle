@@ -10,9 +10,14 @@ using namespace Rcpp;
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{calculateNewXi} returns a numeric d by d matrix with the
 //' second moments.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericMatrix calculateNewXi(NumericVector p, int d) {
   NumericMatrix xi(d, d);
   unsigned long long int pLength = p.size();

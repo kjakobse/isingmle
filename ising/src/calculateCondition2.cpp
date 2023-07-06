@@ -13,11 +13,16 @@ using namespace Rcpp;
 //' @param xi NumericMatrix to be compared with m.
 //' @return \code{calculateCondition2} returns a vector with the difference
 //' between entries in m and xi for those entries specified by e.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //' @importFrom Rcpp evalCpp
 //' @useDynLib ising, .registration = TRUE
 //'
 // [[Rcpp::export]]
+
 NumericVector calculateCondition2(NumericMatrix e,
                                   NumericMatrix m,
                                   NumericMatrix xi) {

@@ -13,9 +13,14 @@ using namespace Rcpp;
 //' @param mu Numeric vector specifying the mean of the distribution.
 //' @param d Integer specifying the number of binary variables.
 //' @return \code{createP} returns a numeric vector with the distribution p.
+//' @author Kim Daniel Jakobsen
+//' @examples
+//' 1+1
+//'
 //' @export
 //'
 // [[Rcpp::export]]
+
 NumericVector createP(NumericVector mu, int d) {
   unsigned long long int pLength = pow(2, d);
   NumericVector p(pLength);

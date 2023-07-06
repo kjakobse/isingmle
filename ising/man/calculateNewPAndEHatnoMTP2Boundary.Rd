@@ -25,3 +25,10 @@ the updated distribution.
 \code{IsingMLE}. It updates the distribution p for the edges in ePlus when
 some of the empirical distributions contain zeroes.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

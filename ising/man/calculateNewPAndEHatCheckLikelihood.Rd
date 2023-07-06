@@ -55,3 +55,10 @@ It fills the matrix eHat with the edges of the independence graph after
 the update.\cr iter is used to indicate if the provided J should be used
 or not. If iter = 0 J is calculated and otherwise the provided J is used.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

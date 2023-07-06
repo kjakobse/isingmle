@@ -34,3 +34,10 @@ mean of variable 1 should have index 1 in xBar (using 1-indexing).
 The value added to the zeroes is subsequently subtracted from the positive
 values so they still sum to 1.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

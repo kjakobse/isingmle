@@ -43,3 +43,10 @@ by \code{IsingMLEmtp2CheckLikelihood}. It updates the distribution p for
 the edges in ePlus when some of the empirical distributions contain zeroes
 and prints the likelihood after each iteration.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

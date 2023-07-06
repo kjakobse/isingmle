@@ -21,3 +21,10 @@ createEPlus(e, m, xBar)
 \code{isingMLEmtp2}. It creates the matrix EPlus of edges uv where
 \eqn{M_uv > \bar{x}_u \bar{x}_v}.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}

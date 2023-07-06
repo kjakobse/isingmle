@@ -76,3 +76,10 @@ belongs to the observation whose binary value matches the value of the index
 (using zero-indexing).\cr To fix the value of J_ij choose an initial
 distribution with the desired value of J_ij and remove the edge ij from G.
 }
+\examples{
+1+1
+
+}
+\author{
+Kim Daniel Jakobsen
+}
