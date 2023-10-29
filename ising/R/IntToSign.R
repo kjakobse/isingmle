@@ -11,14 +11,13 @@
 #' @return \code{IntToSign} returns a vector with length equal to digits,
 #' containing the sign representation of the input integer.
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
-
 IntToSign <- function(x, digits) {
   i <- 0L
   Sign <- rep(-1, digits)
   while (x > 0) {
-    if(x %% 2L == 1) {
+    if (x %% 2L == 1) {
       Sign[digits - i] <- 1
     }
     x <- x %/% 2L

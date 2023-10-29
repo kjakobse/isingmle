@@ -29,25 +29,28 @@
 #' are returned in a matrix or in a data frame.
 #' @author Kim Daniel Jakobsen
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
 #' @export
-IsingSampler <- function(h = NULL,
-                         J = NULL,
-                         p = NULL,
-                         N = 1000L,
-                         obs = TRUE,
-                         int = FALSE,
-                         matrix = FALSE) {
+IsingSampler <- function(
+    h = NULL,
+    J = NULL,
+    p = NULL,
+    N = 1000L,
+    obs = TRUE,
+    int = FALSE,
+    matrix = FALSE) {
   if (!(is.null(h) || is.numeric(h))) stop("h must be a numeric vector")
-  if (!(is.null(J) || is.matrix(J) && isSymmetric(J) && length(h) == dim(J)[1])) {
+  if (
+    !(is.null(J) || is.matrix(J) && isSymmetric(J) && length(h) == dim(J)[1])
+  ) {
     stop(
       "J must be a symmetric matrix with dimensions equal to the lenght of h."
     )
   }
 
   # Initiate the number of binary variables d, and the distribution p:
-  if(is.null(p)) {
+  if (is.null(p)) {
     d <- length(h)
     p <- computeP(h, J)
   } else {
@@ -56,12 +59,12 @@ IsingSampler <- function(h = NULL,
 
   # Sample indices whose binary representation corresponds to the observations
   # in the data set:
-  IntSample <- sample(x = 0:(2^d-1), size = N, replace = TRUE, prob = p)
+  IntSample <- sample(x = 0:(2^d - 1), size = N, replace = TRUE, prob = p)
 
   # Return the sampled data in the format specified by the input. Either just
   # the integers, just the corresponding binary observations, or both:
   if (matrix) {
-    if (int & obs) {
+    if (int && obs) {
       Sample <- matrix(0, N, d)
       for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(list(observations = Sample, observations_int = IntSample))
@@ -75,7 +78,7 @@ IsingSampler <- function(h = NULL,
       stop("At least one of obs or int should be set to TRUE")
     }
   } else {
-    if (int & obs) {
+    if (int && obs) {
       Sample <- matrix(0, N, d)
       for (i in 1:N) Sample[i, ] <- IntToSign(IntSample[i], d)
       return(

@@ -33,87 +33,113 @@
 #' model.
 #' @author Kim Daniel Jakobsen
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
 #' @export
 #' @exportPattern "^[[:alpha:]]+"
 
-bootstrapLikelihoodRatio <- function(p,
-                                     d,
-                                     N,
-                                     largeModel,
-                                     nullModel,
-                                     epsilon,
-                                     GLarge = NULL,
-                                     GNull = NULL,
-                                     maxIter = 100L,
-                                     zeroReplace = FALSE,
-                                     ReplaceValue = 1e-10) {
+bootstrapLikelihoodRatio <- function(
+    p,
+    d,
+    N,
+    largeModel,
+    nullModel,
+    epsilon,
+    GLarge = NULL,
+    GNull = NULL,
+    maxIter = 100L,
+    zeroReplace = FALSE,
+    ReplaceValue = 1e-10) {
   # Generate a sample from the given null model with N observations:
-  Listsample <- IsingSampler(p = p,
-                             N = N,
-                             obs = TRUE,
-                             int = TRUE,
-                             matrix = TRUE)
+  Listsample <- IsingSampler(
+    p = p,
+    N = N,
+    obs = TRUE,
+    int = TRUE,
+    matrix = TRUE
+  )
   sample <- Listsample$observations
   intSample <- Listsample$observations_int
   # From the simulated data, calculate the log-likelihood for the specified
   # null model:
   if (nullModel == "IsingMTP2") {
     if (is.null(GNull)) {
-      stop ("GNull must be specified when nullModel is IsingMTP2")
+      stop("GNull must be specified when nullModel is IsingMTP2")
     }
-    fit_null <- IsingMLEmtp2(G = GNull,
-                             data = sample,
-                             epsilon = epsilon,
-                             maxIter = maxIter,
-                             zeroReplace = zeroReplace,
-                             ReplaceValue = ReplaceValue)
-    LogLikelihoodNull <- IsingLogLikelihood(data = sample, p = fit_null$p_hat)
+    fit_null <- IsingMLEmtp2(
+      G = GNull,
+      data = sample,
+      epsilon = epsilon,
+      maxIter = maxIter,
+      zeroReplace = zeroReplace,
+      ReplaceValue = ReplaceValue
+    )
+    LogLikelihoodNull <- IsingLogLikelihood(
+      data = sample,
+      p = fit_null$p_hat
+    )
   } else if (nullModel == "Ising") {
     if (is.null(GNull)) {
-      stop ("GNull must be specified when nullModel is Ising")
+      stop("GNull must be specified when nullModel is Ising")
     }
-    fit_null <- IsingMLE(G = GNull,
-                         data = sample,
-                         epsilon = epsilon,
-                         maxIter = maxIter,
-                         zeroReplace = zeroReplace,
-                         ReplaceValue = ReplaceValue)
-    LogLikelihoodNull <- IsingLogLikelihood(data = sample, p = fit_null$p_hat)
+    fit_null <- IsingMLE(
+      G = GNull,
+      data = sample,
+      epsilon = epsilon,
+      maxIter = maxIter,
+      zeroReplace = zeroReplace,
+      ReplaceValue = ReplaceValue
+    )
+    LogLikelihoodNull <- IsingLogLikelihood(
+      data = sample,
+      p = fit_null$p_hat
+    )
   } else {
-    stop ("nullModel must be [\"Ising\" or \"IsingMTP2\"]")
+    stop("nullModel must be [\"Ising\" or \"IsingMTP2\"]")
   }
   # From the simulated data, calculate the log-likelihood for the specified
   # large model:
   if (largeModel == "Ising") {
     if (is.null(GLarge)) {
-      stop ("GLarge must be specified when largeModel is Ising")
+      stop("GLarge must be specified when largeModel is Ising")
     }
-    fit_large <- IsingMLE(G = GLarge,
-                          data = sample,
-                          epsilon = epsilon,
-                          maxIter = maxIter,
-                          zeroReplace = zeroReplace,
-                          ReplaceValue = ReplaceValue)
-    LogLikelihoodLarge <- IsingLogLikelihood(data = sample, p = fit_large$p_hat)
+    fit_large <- IsingMLE(
+      G = GLarge,
+      data = sample,
+      epsilon = epsilon,
+      maxIter = maxIter,
+      zeroReplace = zeroReplace,
+      ReplaceValue = ReplaceValue
+    )
+    LogLikelihoodLarge <- IsingLogLikelihood(
+      data = sample,
+      p = fit_large$p_hat
+    )
   } else if (largeModel == "IsingMTP2") {
     if (is.null(GLarge)) {
-      stop ("GLarge must be specified when nullModel is IsingMTP2")
+      stop("GLarge must be specified when nullModel is IsingMTP2")
     }
-    fit_large <- IsingMLEmtp2(G = GLarge,
-                              data = sample,
-                              epsilon = epsilon,
-                              maxIter = maxIter,
-                              zeroReplace = zeroReplace,
-                              ReplaceValue = ReplaceValue)
-    LogLikelihoodLarge <- IsingLogLikelihood(data = sample, p = fit_large$p_hat)
+    fit_large <- IsingMLEmtp2(
+      G = GLarge,
+      data = sample,
+      epsilon = epsilon,
+      maxIter = maxIter,
+      zeroReplace = zeroReplace,
+      ReplaceValue = ReplaceValue
+    )
+    LogLikelihoodLarge <- IsingLogLikelihood(
+      data = sample,
+      p = fit_large$p_hat
+    )
   } else if (largeModel == "FullBinary") {
-    LogLikelihoodLarge <- binaryLogLikelihood(intData = intSample, d = d)
+    LogLikelihoodLarge <- binaryLogLikelihood(
+      intData = intSample,
+      d = d
+    )
   } else {
-    stop ("largeModel must be [\"Ising\", \"IsingMTP2\", or \"FullBinary\"]")
+    stop("largeModel must be [\"Ising\", \"IsingMTP2\", or \"FullBinary\"]")
   }
 
   # return the value of the log-likelihood ratio test statistic:
-  return (-2 * (LogLikelihoodNull - LogLikelihoodLarge))
+  return(-2 * (LogLikelihoodNull - LogLikelihoodLarge))
 }

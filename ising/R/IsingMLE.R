@@ -39,25 +39,28 @@
 #' algorithm converged.
 #' @author Kim Daniel Jakobsen
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
 #' @export
 #' @import stats
-IsingMLE <- function(G,
-                     xBar = NULL,
-                     M = NULL,
-                     data = NULL,
-                     epsilon = 1e-4,
-                     maxIter = 100L,
-                     zeroReplace = FALSE,
-                     ReplaceValue = 1e-10){
+IsingMLE <- function(
+    G,
+    xBar = NULL,
+    M = NULL,
+    data = NULL,
+    epsilon = 1e-4,
+    maxIter = 100L,
+    zeroReplace = FALSE,
+    ReplaceValue = 1e-10) {
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) != 2) {
     stop("G must be a list of length two.")
   }
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) {
-    stop("G must contain a vector with vertices and a matrix ",
-         "with two columns having edges in the rows.")
+    stop(
+      "G must contain a vector with vertices and a matrix ",
+      "with two columns having edges in the rows."
+    )
   }
   V <- seq_along(G[[1]])
   E <- matrix(
@@ -71,7 +74,7 @@ IsingMLE <- function(G,
 
   # Initiate the mean value parameter mu with the empirical value. If not given
   # directly the empirical moments are calculated from the provided data set:
-  if (!is.null(data) && (is.null(xBar) | is.null(M))) {
+  if (!is.null(data) && (is.null(xBar) || is.null(M))) {
     M <- calculateM(as.matrix(data), dim(data)[1], dim(data)[2])
     xBar <- calculatexBar(as.matrix(data), dim(data)[1], dim(data)[2])
     mu <- xBar
@@ -80,7 +83,7 @@ IsingMLE <- function(G,
     mu <- xBar
   }
   if (!exists("mu", mode = "double")) {
-    stop ("Must input either a data set or sufficient statistics")
+    stop("Must input either a data set or sufficient statistics")
   }
 
   # initiate d, the number of binary variables:
@@ -105,7 +108,7 @@ IsingMLE <- function(G,
 
   # Initiate the condition on Xi. Inf ensures that the statement
   # max(condition > epsilon) is always true initially:
-  # condition checks if the difference between Xi and M for entries in E are zero.
+  # condition checks if difference between Xi and M for entries in E are zero.
   condition <- Inf
 
   if (zeroReplace) {
@@ -119,22 +122,26 @@ IsingMLE <- function(G,
     )
     econtainsZeroes <- 0
     if (ncol(empirical) == 0) {
-      stop (cat("input doesn't fulfill conditions for existance of MLE.",
-                "\n",
-                "Produced negative values of the empirical distribution"))
+      stop(cat(
+        "input doesn't fulfill conditions for existance of MLE.",
+        "\n",
+        "Produced negative values of the empirical distribution",
+        sep = ""
+      ))
     }
-  } else{
+  } else {
     # Calculate the empirical distribution for each variable pair in E and
     # check if any contain zeroes:
     empiricalList <- calculateEmpirical(E, M, xBar)
     empirical <- empiricalList$empirical
     econtainsZeroes <- empiricalList$containsZeroes
     if (ncol(empirical) == 0) {
-      stop (
+      stop(cat(
         "input doesn't fulfill conditions for existance of MLE.",
         "\n",
-        "Produced negative values of the empirical distribution."
-      )
+        "Produced negative values of the empirical distribution.",
+        sep = ""
+      ))
     }
   }
 
@@ -144,8 +151,13 @@ IsingMLE <- function(G,
     iter <- 0L
     # While loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
-    while ((iter < maxIter) &&
-           (max(abs(mu-xBar)) > epsilon || max(condition) > epsilon)) {
+    while (
+      (iter < maxIter) &&
+        (
+          max(abs(mu - xBar)) > epsilon ||
+            max(condition) > epsilon
+        )
+    ) {
       # Update the distribution for each variable pair in E, and update the
       # edges in the fitted graph:
       pAndEHatResult <- calculateNewPAndEHatnoMTP2Boundary(
@@ -187,8 +199,13 @@ IsingMLE <- function(G,
     capitalJ <- matrix(0, d, d)
     # While loop updating the distribution until the convergence criteria is
     # meet or the max number of iterations is reached:
-    while ((iter < maxIter) &&
-           (max(abs(mu-xBar)) > epsilon || max(condition) > epsilon)) {
+    while (
+      (iter < maxIter) &&
+        (
+          max(abs(mu - xBar)) > epsilon ||
+            max(condition) > epsilon
+        )
+    ) {
       # Update the distribution for each variable pair in E, update the edges
       # in the fitted graph, and calculate the value of the canonical parameter
       # J for the updated Ising model:
@@ -211,16 +228,16 @@ IsingMLE <- function(G,
       eHatOmitNA <- na.omit(eHat)
 
       # Calculate the updated condition in the convergence criteria:
-      condition <- calculateCondition(E, M, Xi);
+      condition <- calculateCondition(E, M, Xi)
 
       iter <- iter + 1L
     }
 
     # Calculate the canonical parameter h for the fitted Ising model:
-    h <- calculateH(d, p);
+    h <- calculateH(d, p)
 
     if (iter >= maxIter) {
-      warning ("MLE did not converge; maximum number of iterations reached")
+      warning("MLE did not converge; maximum number of iterations reached")
     }
 
     # Recode the vertices in G to the names specified in the input:

@@ -42,22 +42,23 @@
 #' model.
 #' @author Kim Daniel Jakobsen
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
 #' @export
-likelihoodRatioTest <- function(nSim,
-                                p,
-                                d,
-                                N,
-                                largeModel,
-                                nullModel,
-                                epsilon,
-                                GLarge = NULL,
-                                GNull = NULL,
-                                maxIter = 100L,
-                                nCores = 1L,
-                                zeroReplace = FALSE,
-                                ReplaceValue = 1e-10) {
+likelihoodRatioTest <- function(
+    nSim,
+    p,
+    d,
+    N,
+    largeModel,
+    nullModel,
+    epsilon,
+    GLarge = NULL,
+    GNull = NULL,
+    maxIter = 100L,
+    nCores = 1L,
+    zeroReplace = FALSE,
+    ReplaceValue = 1e-10) {
   if (!is.numeric(nSim) || ((nSim %% 1) != 0) || (nSim < 1)) {
     stop("nSim must be an integer of value greater than zero")
   }

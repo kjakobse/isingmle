@@ -1,4 +1,4 @@
-#IsingMLEmtp2Partial function:
+# IsingMLEmtp2Partial function:
 
 #' Calculate the profile maximum likelihood estimator in the Ising model under
 #' MTP_2 constraint.
@@ -46,21 +46,22 @@
 #' until the algorithm converged.
 #' @author Kim Daniel Jakobsen
 #' @examples
-#' 1+1
+#' 1 + 1
 #'
 #' @export
 #' @importFrom rlang duplicate
-IsingMLEmtp2Partial <- function(G,
-                                pstart,
-                                Jstart,
-                                xBar = NULL,
-                                M = NULL,
-                                data = NULL,
-                                epsilon = 1e-4,
-                                maxIter = 100L,
-                                ptol = 1e-15,
-                                zeroReplace = TRUE,
-                                ReplaceValue = 1e-10){
+IsingMLEmtp2Partial <- function(
+    G,
+    pstart,
+    Jstart,
+    xBar = NULL,
+    M = NULL,
+    data = NULL,
+    epsilon = 1e-4,
+    maxIter = 100L,
+    ptol = 1e-15,
+    zeroReplace = TRUE,
+    ReplaceValue = 1e-10) {
   # Encode the vertices in G as the integers from 1 to d:
   if (!is.list(G) || length(G) != 2) stop("G must be a list of length two.")
   if (!is.vector(G[[1]]) || !is.matrix(G[[2]])) {
@@ -79,7 +80,7 @@ IsingMLEmtp2Partial <- function(G,
   # directly the empirical moments are calculated from the provided data set:
   if (is.null(data)) {
     if (is.null(xBar) || is.null(M)) {
-      stop ("Must input either a data set or sufficient statistics")
+      stop("Must input either a data set or sufficient statistics")
     }
     mu <- xBar
   } else {
@@ -117,13 +118,13 @@ IsingMLEmtp2Partial <- function(G,
   condition <- Inf
   condition2 <- calculateCondition2(E, M, Xi)
 
-  if(zeroReplace) {
+  if (zeroReplace) {
     # Calculate the empirical distribution for each variable pair in ePlus and
     # replace zeroes with ReplaceValue
     empirical <- calculateEmpiricalReplaceZeroes(ePlus, M, xBar, ReplaceValue)
     econtainsZeroes <- 0
     if (ncol(empirical) == 0) {
-      stop (
+      stop(
         "input doesn't fulfill conditions for existance of MLE.",
         "\n",
         "Produced negative values of the empirical distribution."
@@ -136,7 +137,7 @@ IsingMLEmtp2Partial <- function(G,
     empirical <- empiricalList$empirical
     econtainsZeroes <- empiricalList$containsZeroes
     if (ncol(empirical) == 0) {
-      stop (
+      stop(
         "input doesn't fulfill conditions for existance of MLE.",
         "\n",
         "Produced negative values of the empirical distribution."
@@ -151,12 +152,12 @@ IsingMLEmtp2Partial <- function(G,
     # meet or the max number of iterations is reached:
     while (
       (iter < maxIter) &&
-      (
-        max(abs(mu-xBar)) > epsilon |
-        suppressWarnings(max(condition2) > epsilon) |
-        suppressWarnings(max(condition) > epsilon)
-      )
-    ){
+        (
+          max(abs(mu - xBar)) > epsilon ||
+            suppressWarnings(max(condition2) > epsilon) ||
+            suppressWarnings(max(condition) > epsilon)
+        )
+    ) {
       # Update the distribution for each variable pair in ePlus, and update
       # the edges in the fitted graph:
       pAndEHatResult <- calculateNewPAndEHatBoundary(
@@ -166,7 +167,7 @@ IsingMLEmtp2Partial <- function(G,
         p,
         eHat
       )
-      if(length(pAndEHatResult$p) == 1 && is.na(pAndEHatResult$p[1])) {
+      if (length(pAndEHatResult$p) == 1 && is.na(pAndEHatResult$p[1])) {
         stop("update could not find indices to calculate J")
       }
       p <- pAndEHatResult$p
@@ -183,16 +184,16 @@ IsingMLEmtp2Partial <- function(G,
       # E_hat are zero.
       # condition2 checks if the entries of Xi in E are larger than the
       # corresponding entries in M.
-      condition <- calculateCondition(eHatOmitNA, M, Xi);
-      condition2 <- calculateCondition2(E, M, Xi);
+      condition <- calculateCondition(eHatOmitNA, M, Xi)
+      condition2 <- calculateCondition2(E, M, Xi)
 
       iter <- iter + 1L
     }
 
     if (iter >= maxIter) {
-      warning ("MLE did not converge; maximum number of iterations reached")
+      warning("MLE did not converge; maximum number of iterations reached")
     }
-    warning ("Maximum likelihood estimate is on the boundary")
+    warning("Maximum likelihood estimate is on the boundary")
 
     # Recode the vertices in G to the names specified in the input:
     for (i in V) {
@@ -203,7 +204,7 @@ IsingMLEmtp2Partial <- function(G,
 
     # Return the fitted distribution, graph, mean value parameters and number
     # of iterations until convergence:
-    return (
+    return(
       list(
         p_hat = p,
         G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA),
@@ -219,11 +220,11 @@ IsingMLEmtp2Partial <- function(G,
     # meet or the max number of iterations is reached:
     while (
       (iter < maxIter) &&
-      (
-        max(abs(mu-xBar)) > epsilon |
-        suppressWarnings(max(condition2) > epsilon) |
-        suppressWarnings(max(condition) > epsilon)
-      )
+        (
+          max(abs(mu - xBar)) > epsilon ||
+            suppressWarnings(max(condition2) > epsilon) ||
+            suppressWarnings(max(condition) > epsilon)
+        )
     ) {
       # Update the distribution for each variable pair in ePlus, update the
       # edges in the fitted graph, and calculate the value of the canonical
@@ -258,7 +259,7 @@ IsingMLEmtp2Partial <- function(G,
     h <- calculateH(d, p)
 
     if (iter >= maxIter) {
-      warning ("MLE did not converge; maximum number of iterations reached")
+      warning("MLE did not converge; maximum number of iterations reached")
     }
 
     # Recode the vertices in G to the names specified in the input:
@@ -270,7 +271,7 @@ IsingMLEmtp2Partial <- function(G,
 
     # Return the fitted distribution, graph, mean value parameters, the
     # canonical parameters, and number of iterations until convergence:
-    return (
+    return(
       list(
         p_hat = p,
         G_hat = list(V_hat = G[[1]], E_hat = eHatOmitNA),
